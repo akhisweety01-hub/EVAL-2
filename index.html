@@ -1022,7 +1022,12 @@ function saveAndFetchLeaderboard(score,accStr){
   .then(data=>renderLeaderboard(data,score,accStr))
   .catch(err=>{console.error('Leaderboard:',err);if(statusEl)statusEl.textContent='📡 OFFLINE';displayFallbackLeaderboard(score,accStr);});
 }
-function parseAcc(v){if(typeof v==='number')return v;return parseFloat(String(v).replace('%',''))||0;}
+function parseAcc(v){
+  if(v===undefined||v===null||v==='—')return 0;
+  let num=parseFloat(String(v).replace('%',''))||0;
+  if(num>0&&num<=1.0)return num*100;
+  return num;
+}
 function renderLeaderboard(data,currentScore,currentAcc){
   const tbody=$('leaderboard-body');const statusEl=$('leaderboard-status');
   if(statusEl)statusEl.textContent='🟢 LIVE';if(!tbody)return;
