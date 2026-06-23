@@ -32,6 +32,30 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
 
+/* ── ANTIGRAVITY CURSOR ── */
+#cursor-dot{
+  position:fixed;width:10px;height:10px;border-radius:50%;
+  background:var(--accent2);pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);transition:background .2s;
+  box-shadow:0 0 8px rgba(124,58,237,0.7);
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;border-radius:50%;
+  border:2px solid var(--accent);pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 14px rgba(26,115,232,0.4);
+  transition:width .2s,height .2s,border-color .2s,box-shadow .2s;
+}
+#cursor-ring.clicked{
+  width:52px;height:52px;border-color:var(--accent2);
+  box-shadow:0 0 22px rgba(124,58,237,0.6);
+}
+body.touch-device #cursor-dot,
+body.touch-device #cursor-ring{display:none;}
+
+/* Magnetic elements attract/repel cursor */
+.mag-item{transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+
 /* ── Animations ── */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.28)}100%{transform:scale(1)}}
@@ -42,7 +66,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 @keyframes glowRed{0%{box-shadow:0 0 0 0 rgba(220,38,38,.22);border-color:var(--danger)}70%{box-shadow:0 0 0 6px rgba(220,38,38,0);border-color:var(--danger)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
 @keyframes blink{from{opacity:1}to{opacity:.25}}
 @keyframes nameGlow{0%,100%{box-shadow:0 0 0 3px rgba(124,58,237,0.10),var(--shadow-md)}50%{box-shadow:0 0 0 6px rgba(124,58,237,0.20),var(--shadow-md)}}
-@keyframes ripple{to{transform:scale(4);opacity:0}}
+@keyframes glowRedText{0%,100%{text-shadow:0 0 8px #dc2626,0 0 20px #dc2626,0 0 40px #dc2626;color:#ff4444}50%{text-shadow:0 0 4px #ff0000,0 0 10px #ff0000;color:#dc2626}}
+@keyframes bdayBtnPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0.5),0 2px 8px rgba(124,58,237,0.3)}50%{box-shadow:0 0 0 6px rgba(124,58,237,0),0 2px 14px rgba(124,58,237,0.5)}}
 
 .screen{display:none}
 .screen.active{display:block;animation:fadeInUp .38s cubic-bezier(.16,1,.3,1) forwards}
@@ -63,8 +88,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 }
 .brand-name{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;font-family:var(--font-label)}
 .brand-sub{font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:1px}
-.made-by{font-size:9px;color:var(--text3);letter-spacing:1px;text-align:right;line-height:1.6}
-.made-by span{color:var(--accent2);font-weight:700;font-size:11px}
+
+/* ── MADE BY YASH BUTTON ── */
+.made-by-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 13px;border-radius:7px;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  border:none;color:#fff;cursor:pointer;
+  font-family:var(--font-label);font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;text-decoration:none;
+  animation:bdayBtnPulse 2.2s ease-in-out infinite;
+  transition:transform .18s,box-shadow .18s;
+}
+.made-by-btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 6px 20px rgba(124,58,237,0.45);}
+.made-by-btn:active{transform:scale(.96);}
 
 /* ── TICKER ── */
 .score-ticker{display:flex;gap:5px;align-items:center}
@@ -108,21 +145,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 #app{max-width:780px;margin:0 auto;padding:.8rem 1rem;position:relative;z-index:1}
 #start-screen{padding:1.5rem .5rem 2rem}
 
-/* Hero header */
 .start-hero{text-align:center;margin-bottom:1.8rem}
 .title-l1{font-size:30px;font-weight:700;color:var(--accent);letter-spacing:4px;text-transform:uppercase;font-family:var(--font-display);line-height:1.1}
 .title-l2{font-size:16px;font-weight:700;color:var(--accent2);letter-spacing:6px;text-transform:uppercase;font-family:var(--font-display);margin:.3rem 0 .6rem}
 .divider{width:72px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:.5rem auto}
 .sub-title{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:.4rem}
 
-/* Stats row */
 .start-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1.2rem 0}
 .stat-box{background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.65rem;text-align:center;box-shadow:var(--shadow);transition:border-color .2s}
 .stat-box:hover{border-color:var(--accent)}
 .stat-num{font-size:22px;font-weight:700;color:var(--accent);font-family:var(--font-mono)}
 .stat-lbl{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 
-/* Scoring pill */
 .scoring-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem}
 .scoring-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-family:var(--font-label);font-size:11px;font-weight:700;letter-spacing:1px}
 .pill-correct{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.3);color:var(--accent3)}
@@ -130,7 +164,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .pill-skip{background:rgba(148,163,184,.1);border:1px solid var(--border);color:var(--text3)}
 .pill-msq{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:var(--accent2)}
 
-/* Name card — RIPPLE EFFECT here */
+/* Name card with water ripple */
 .name-card{
   position:relative;overflow:hidden;
   max-width:460px;margin:0 auto 1.2rem;
@@ -139,9 +173,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
   box-shadow:var(--shadow-md);
   animation:nameGlow 3s ease-in-out infinite
 }
-/* Ripple canvas sits inside name-card */
-#ripple-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:12px}
-.name-card>*:not(#ripple-canvas){position:relative;z-index:1}
+.ripple-canvas-el{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:12px}
+.name-card>*:not(.ripple-canvas-el){position:relative;z-index:1}
 .name-card-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border2)}
 .name-card-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .name-card-title{font-family:var(--font-label);font-size:13px;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase}
@@ -164,12 +197,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .warn-bar-text{font-size:10.5px;color:#7f1d1d;line-height:1.6}
 .warn-bar-text b{color:var(--danger);font-family:var(--font-label);font-size:11.5px}
 
-/* Topics */
 .topics-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:1.2rem}
 .topic-tag{font-size:9px;padding:4px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--accent2);letter-spacing:1px;text-transform:uppercase;font-family:var(--font-label);transition:all .2s}
 .topic-tag:hover{border-color:var(--accent2);background:rgba(124,58,237,.07)}
 
-/* Start button */
 .start-btn{
   display:inline-flex;align-items:center;gap:10px;padding:14px 44px;
   background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;
@@ -194,7 +225,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .seg{flex:1;height:4px;border-radius:1px;background:var(--bg4);transition:background .3s}
 .seg.sc{background:var(--accent3)}.seg.sw{background:var(--danger)}.seg.ss{background:var(--text3)}.seg.cur{background:var(--warn)}
 
-/* Timer */
 .timer-section{display:flex;align-items:center;gap:12px;margin-bottom:.7rem;background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.6rem .85rem;transition:border-color .3s,box-shadow .3s;box-shadow:var(--shadow)}
 .timer-section.dng-pulse{animation:glowRed 1.5s infinite;border-color:var(--danger)}
 .timer-ring{width:46px;height:46px;position:relative;flex-shrink:0}
@@ -214,19 +244,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .bar-time.dng{background:linear-gradient(90deg,var(--danger),var(--warn))}
 .bar-prog{background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s}
 
-/* Q type badge */
 .q-type-badge-el{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:.35rem;font-family:var(--font-label)}
 .q-type-single{background:rgba(26,115,232,.1);color:var(--accent);border:1px solid rgba(26,115,232,.22)}
 .q-type-multi{background:rgba(124,58,237,.1);color:var(--accent2);border:1px solid rgba(124,58,237,.22)}
 
-/* Question card */
 .q-card{background:var(--bg2);border:2px solid var(--border2);border-left:4px solid var(--accent);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.7rem;animation:slideIn .38s cubic-bezier(.2,.8,.2,1) both;box-shadow:var(--shadow)}
 .q-card.multi-card{border-left-color:var(--accent2)}
 .q-num{font-size:9px;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:.3rem;font-family:var(--font-label)}
 .q-text{font-size:13px;line-height:1.75;color:var(--text)}
 .q-instruction{font-size:10px;color:var(--accent2);margin-top:.3rem;font-style:italic}
 
-/* Options */
 .options{display:flex;flex-direction:column;gap:7px;margin-bottom:.7rem}
 .opt{
   width:100%;padding:.72rem 1rem;border:2px solid var(--border2);border-radius:8px;
@@ -248,7 +275,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .opt.locked-opt{cursor:default;pointer-events:none}
 .opt:nth-child(1){animation-delay:.04s}.opt:nth-child(2){animation-delay:.08s}.opt:nth-child(3){animation-delay:.12s}.opt:nth-child(4){animation-delay:.16s}
 
-/* MSQ submit */
 .ms-submit-row{margin-bottom:.7rem;display:none}
 .ms-submit-btn{
   padding:10px 24px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;
@@ -259,7 +285,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .ms-submit-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,115,232,.32)}
 .ms-submit-btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
 
-/* Feedback */
 .feedback{margin-bottom:.7rem;padding:.8rem 1rem;border-radius:8px;font-size:11px;line-height:1.75;display:none;border-left:4px solid}
 .feedback.show{display:block;animation:slideIn .3s cubic-bezier(.16,1,.3,1)}
 .feedback.cfb{background:rgba(5,150,105,.06);border-color:var(--accent3);color:#065f46}
@@ -268,7 +293,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .fb-label{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-label)}
 .cfb .fb-label{color:var(--accent3)}.wfb .fb-label{color:var(--danger)}.sfb .fb-label{color:var(--warn)}
 
-/* Nav */
 .nav-row{display:flex;gap:8px;margin-top:.2rem}
 .nav-btn{flex:1;padding:11px;background:var(--bg2);font-family:var(--font-label);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .18s;box-shadow:var(--shadow)}
 .nav-btn:active{transform:scale(.97)}
@@ -325,7 +349,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .action-btn.as{border:2px solid var(--border2);color:var(--text2)}
 .action-btn.as:hover{border-color:var(--accent2);color:var(--accent2)}
 
-/* Review */
 #review-section{margin-top:.7rem;display:none}
 .review-header{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border2);font-family:var(--font-label)}
 .review-item{border:2px solid var(--border2);border-radius:8px;padding:.7rem;margin-bottom:.5rem;background:var(--bg2);animation:fadeInItem .28s cubic-bezier(.16,1,.3,1) both;box-shadow:var(--shadow)}
@@ -339,7 +362,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .pts-neg{background:rgba(220,38,38,.08);color:var(--danger);border:1px solid rgba(220,38,38,.15)}
 .pts-zero{background:rgba(148,163,184,.1);color:var(--text3);border:1px solid var(--border)}
 
-/* Leaderboard */
+/* ══ LEADERBOARD ══ */
+/* Water ripple wrapper for leaderboard */
+.ripple-wrap{position:relative;overflow:hidden;border-radius:12px;}
+.ripple-wrap .ripple-canvas-el{border-radius:12px;}
+.ripple-wrap>*:not(.ripple-canvas-el){position:relative;z-index:1;}
+
+#leaderboard-screen{padding:.4rem 0}
 #leaderboard-table{width:100%;border-collapse:collapse;font-size:11px;text-align:left;margin-top:.5rem}
 #leaderboard-table th{font-weight:700;letter-spacing:1px;color:var(--text3);border-bottom:2px solid var(--border2);padding:8px 6px;font-family:var(--font-label);font-size:12px}
 #leaderboard-table td{padding:9px 6px;border-bottom:1px solid var(--border2);vertical-align:middle}
@@ -348,9 +377,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 .rank-1{background:rgba(217,119,6,.1);color:var(--warn);border-color:var(--warn)}
 .rank-2{background:rgba(124,58,237,.1);color:var(--accent2);border-color:var(--accent2)}
 .rank-3{background:rgba(26,115,232,.1);color:var(--accent);border-color:var(--accent)}
+
+/* Glowing red bday notice */
+.bday-notice{
+  text-align:center;margin-top:1rem;padding:.7rem;
+  font-family:var(--font-label);font-size:13px;font-weight:700;
+  letter-spacing:1.5px;cursor:pointer;
+  animation:glowRedText 1.8s ease-in-out infinite;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.bday-notice:hover{opacity:.85;}
 </style>
 </head>
 <body>
+
+<!-- ── CUSTOM CURSOR ── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
 
 <!-- TOP BAR -->
 <div class="top-bar">
@@ -367,7 +410,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     <div class="ticker-item"><div class="ticker-dot dot-b"></div><span class="ticker-val" id="t-acc">—</span><span class="ticker-lbl">&nbsp;acc</span></div>
   </div>
   <button class="total-score-btn" id="total-score-btn" onclick="showScoreOverlay()" style="display:none">🎯 PTS&nbsp;<span class="ts-val" id="ts-live">0</span></button>
-  <div class="made-by">made by<br><span>YASH</span></div>
+  <!-- MADE BY YASH BUTTON -->
+  <a class="made-by-btn mag-item" id="made-by-btn"
+     href="https://akhisweety01-hub.github.io/BDAY/"
+     target="_blank" rel="noopener noreferrer"
+     title="🎂 Help Yash reach his birthday goal!">
+    🎂 made by YASH
+  </a>
 </div>
 
 <!-- SCORE OVERLAY -->
@@ -397,16 +446,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     <div class="divider"></div>
     <div class="sub-title">🤖 ML Fundamentals · 60 Questions · 45s Each</div>
   </div>
-
-  <!-- Stats -->
   <div class="start-stats">
     <div class="stat-box"><div class="stat-num">60</div><div class="stat-lbl">Questions</div></div>
     <div class="stat-box"><div class="stat-num">45s</div><div class="stat-lbl">Per Q</div></div>
     <div class="stat-box"><div class="stat-num">240</div><div class="stat-lbl">Max Pts</div></div>
     <div class="stat-box"><div class="stat-num">13</div><div class="stat-lbl">Topics</div></div>
   </div>
-
-  <!-- Scoring pills -->
   <div class="scoring-row">
     <span class="scoring-pill pill-correct">✅ +4 Correct</span>
     <span class="scoring-pill pill-wrong">❌ −1 Wrong</span>
@@ -414,9 +459,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     <span class="scoring-pill pill-msq">☑ MSQ: +4 all-correct · 0 partial</span>
   </div>
 
-  <!-- Name card with ripple -->
-  <div class="name-card">
-    <canvas id="ripple-canvas"></canvas>
+  <!-- Name card with water ripple -->
+  <div class="name-card" id="name-card">
+    <canvas class="ripple-canvas-el" id="ripple-name"></canvas>
     <div class="name-card-header">
       <div class="name-card-icon">👤</div>
       <div>
@@ -432,7 +477,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
     </div>
   </div>
 
-  <!-- Topics -->
   <div class="topics-grid">
     <span class="topic-tag">🐍 Python Fundamentals</span>
     <span class="topic-tag">🌿 Git &amp; Version Control</span>
@@ -547,7 +591,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 
 <!-- ══ LEADERBOARD SCREEN ══ -->
 <div id="leaderboard-screen" class="screen">
-  <div class="score-hero" style="padding:1.4rem 1rem;margin-bottom:.7rem">
+  <div class="score-hero ripple-wrap" id="lb-hero">
+    <canvas class="ripple-canvas-el" id="ripple-lb"></canvas>
     <div class="result-title" style="font-size:17px;color:var(--accent2)">🏆 GLOBAL STANDINGS</div>
     <div class="result-msg" style="margin-top:5px">⚡ Real-time Ranking · All Players · Score + Accuracy</div>
   </div>
@@ -567,6 +612,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
         <tbody id="leaderboard-body"></tbody>
       </table>
     </div>
+    <!-- GLOWING RED BIRTHDAY NOTICE -->
+    <div class="bday-notice" onclick="window.open('https://akhisweety01-hub.github.io/BDAY/','_blank')">
+      ❤️ if u wish you can contribute for my bday by clicking my name ❤️
+    </div>
   </div>
   <div class="btn-row">
     <button class="action-btn ap" onclick="restartQuiz()">↺ PLAY AGAIN</button>
@@ -580,16 +629,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-hei
 // ════════════════════════════════════════════════════════
 //  CONSTANTS
 // ════════════════════════════════════════════════════════
-const TT=45, CIRC=113.1, SCIRC=326.73;
+const TT=45, CIRC=113.1, SCIRC=326.73, MAX_PTS=240;
 const PTS_CORRECT=4, PTS_WRONG=-1, PTS_SKIP=0;
 const GAS_URL='https://script.google.com/macros/s/AKfycbzlt4SbZouvCtZFJsPhHSwaeQDc7j67BvVWyzuyUhTfGSd-4cyrvaf0eNl7EcG1tvQPxw/exec';
 let userName='';
 
 // ════════════════════════════════════════════════════════
-//  QUESTION BANK  (type:'single'|'multi', a:index|[indices])
+//  QUESTION BANK
 // ════════════════════════════════════════════════════════
 const QUESTIONS=[
-  // ── DOC2 §1 — 40 Single-Select ──
   {q:"On a dataset where the minority class is only 0.17%, a model that reports 99.83% accuracy catches how many criminals?",opts:["0.17% of them","50% of them","Exactly zero","99.83% of them"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"A model hard-coding the majority class 'not-fraud' achieves high accuracy while failing to detect any anomalies whatsoever."},
   {q:"According to the Saito-Rehmsmeiier Rule, when should you report PR-AUC ONLY?",opts:["When classes are perfectly balanced","When the minority class frequency is < 5%","When ROC-AUC is above 0.90","When using Linear Regression"],a:1,t:"⚖️ Imbalanced Data",type:"single",e:"Severe imbalance causes ROC-AUC to severely inflate, leaving PR-AUC as the only honest metric."},
   {q:"What is the random-classifier baseline for PR-AUC on a dataset with 1% positive samples?",opts:["0.5","0.01","0.99","0.0"],a:1,t:"⚖️ Imbalanced Data",type:"single",e:"The PR-AUC baseline equals the positive class frequency (π = 0.01), unlike ROC-AUC's fixed 0.5 baseline."},
@@ -630,7 +678,7 @@ const QUESTIONS=[
   {q:"What is a 'Confounder' in regression?",opts:["A missing value","A feature that influences both the dependent and independent variables","A type of hyperparameter","The intercept of the line"],a:1,t:"📈 Regression & Diagnostics",type:"single",e:"Uncontrolled confounders create spurious correlations that bias coefficient estimates."},
   {q:"Which component of a time series represents 'regular, repeating patterns'?",opts:["Trend","Seasonality","Residual","Noise"],a:1,t:"⏱️ Time Series",type:"single",e:"Seasonality captures predictable cyclic fluctuations such as weekly or yearly spikes."},
   {q:"In Random Forests, max_features='sqrt' means:",opts:["The tree depth is limited to the square root of features","Only a random subset (√n) of features is evaluated at each split","The feature weights are squared","Features are scaled using square root normalization"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"Randomly sampling √n features at each node decorrelates individual trees, boosting ensemble diversity."},
-  // ── DOC2 §2 — 10 Multi-Select ──
+  // Multi-select questions
   {q:"Which of the following are characteristics of Python Lists?",opts:["Ordered","Immutable","Mutable","Allows Duplicate Values"],a:[0,2,3],t:"🐍 Python Fundamentals",type:"multi",e:"Lists maintain insertion order, allow modification after creation, and accept duplicates. Tuples (not lists) are immutable."},
   {q:"What should be ignored in a standard ML project's .gitignore file?",opts:["README.md","venv/ (Virtual environments)","Large raw datasets","Trained model files (.pkl, .joblib)"],a:[1,2,3],t:"🌿 Git & Version Control",type:"multi",e:"Git is not designed for large binaries or environment-specific folders. README is essential documentation and must be tracked."},
   {q:"Which metrics are honest when evaluating a model on 580:1 imbalanced fraud data?",opts:["Accuracy","Precision","Recall","PR-AUC"],a:[1,2,3],t:"⚖️ Imbalanced Data",type:"multi",e:"Accuracy is dominated by True Negatives on extreme imbalance and is therefore meaningless. Precision, Recall, and PR-AUC are appropriate."},
@@ -641,13 +689,13 @@ const QUESTIONS=[
   {q:"Which are valid stopping conditions for the CART algorithm?",opts:["Node becomes pure","max_depth reached","min_samples_split not met","Training accuracy hits 100%"],a:[0,1,2],t:"🌳 Tree-Based Models",type:"multi",e:"CART stops on purity, depth, and sample-count constraints. Accuracy thresholds are not built-in CART stopping conditions."},
   {q:"Advantages of using a Pipeline object in Scikit-learn include:",opts:["Prevents data leakage during cross-validation","Ensures train-vs-test preprocessing symmetry","Makes the code run 10x faster","Atomizes the 'Production Unit' for serialization"],a:[0,1,3],t:"🔗 Sklearn Pipelines",type:"multi",e:"Pipelines enforce leakage-free preprocessing and clean serialization but do not inherently speed up execution."},
   {q:"What is true about 'One-Pass' vs 'Two-Pass' algorithms for finding the second largest element?",opts:["Two-pass is more memory efficient","One-pass is faster as it only iterates the data once","Two-pass requires finding the maximum first","One-pass handles duplicates by using num != largest logic"],a:[1,2,3],t:"🐍 Python Fundamentals",type:"multi",e:"One-pass tracks two variables simultaneously for a single O(n) scan. Two-pass requires a full scan for max, then a second scan for second-max."},
-  // ── DOC3 §1 — 5 Single-Select ──
+  // Additional single-select
   {q:"In a time-series tabular transformation, why is it mandatory to apply series.shift(1) before applying .rolling(window).mean()?",opts:["To ensure the rolling window has a constant variance.","To prevent 'catastrophic future leakage' where the model uses today's value to predict today.","To convert the series from multiplicative to additive.","To satisfy the Augmented Dickey-Fuller (ADF) unit root requirement."],a:1,t:"⏱️ Time Series",type:"single",e:"Without shifting, the rolling mean includes the current observation's value, causing the model to 'peek' at the target."},
   {q:"How does the CatBoost algorithm specifically solve the data leakage problem associated with standard target encoding?",opts:["By using one-hot encoding for all categorical features with cardinality > 10.","By implementing 'Ordered Target Encoding' which uses only records that appeared earlier in a randomly shuffled order.","By ignoring the target variable entirely during the encoding phase.","By calculating the mean target value only on the validation fold."],a:1,t:"🚀 Advanced Boosting",type:"single",e:"Ordered target encoding ensures each record's feature is built from a subset that excludes the record itself, eliminating leakage."},
   {q:"When comparing the geometry of regularization, why does L1 (Lasso) lead to exact sparsity while L2 (Ridge) does not?",opts:["The L1 constraint is a circle, which allows smooth shrinkage.","The L1 constraint is a diamond with sharp corners on the axes, forcing the optimizer to hit exactly zero.","The L2 constraint has a higher alpha penalty than L1.","L1 is only used for high-dimensional text data."],a:1,t:"🎛️ Validation & Tuning",type:"single",e:"The sharp corners of the L1 diamond mean the loss contours most likely touch the constraint at an axis, where a coefficient is exactly zero."},
   {q:"According to the Saito-Rehmsmeiier Rule, what is the random-classifier baseline for PR-AUC on a dataset where the minority class frequency is π?",opts:["0.5","1.0","π","1−π"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"Unlike ROC-AUC's fixed 0.5 baseline, PR-AUC's random baseline equals π (the positive class rate), making it sensitive to class imbalance."},
   {q:"In the CART algorithm, if you are dealing with a severely imbalanced dataset, which impurity metric is explicitly recommended for better performance?",opts:["Gini Impurity","Entropy","Variance Reduction","Mean Squared Error"],a:1,t:"🌳 Tree-Based Models",type:"single",e:"Entropy's logarithmic scale makes it more sensitive to minority-class splits on severely imbalanced datasets than Gini."},
-  // ── DOC3 §2 — 5 Multi-Select ──
+  // Additional multi-select
   {q:"Which of the following are valid stopping conditions for the CART (Classification and Regression Trees) algorithm?",opts:["The node becomes pure (Gini/Entropy = 0).","The user-defined max_depth is reached.","A resulting leaf would have fewer than min_samples_leaf samples.","The training accuracy reaches 99.83%."],a:[0,1,2],t:"🌳 Tree-Based Models",type:"multi",e:"CART uses purity, max_depth, and minimum-sample constraints as stopping rules. Accuracy thresholds are not a native stopping condition."},
   {q:"Identify the specific 'Diagnostic Plots' required to claim a regression model is structurally valid for deployment:",opts:["Q-Q Plot (to test the Normality of residuals).","Scale-Location Plot (to test for Homoscedasticity).","Residuals vs. Fitted Plot (to test for Linearity).","VIF Plot (to test for target leakage)."],a:[0,1,2],t:"📈 Regression & Diagnostics",type:"multi",e:"The three structural validity plots are Q-Q, Scale-Location, and Residuals vs Fitted. VIF checks multicollinearity, not structural validity."},
   {q:"In a professional ML experiment log, which components are mandatory for 100% reproducibility?",opts:["The Git commit hash of the code.","The fixed random seed (Python, NumPy, and Torch).","The specific version of the dataset used.","The name of the person who ran the experiment."],a:[0,1,2],t:"🔁 Reproducibility",type:"multi",e:"Reproducibility requires locking code (commit hash), randomness (seed), and data (version). The experimenter's name is administrative, not technical."},
@@ -665,47 +713,36 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=$(id);if(el)el.classList.add('active');}
 function pulseEl(id){const el=$(id);if(!el)return;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
 
-// ────────────────────────────────────────
-//  SCORING
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  ACCURACY  =  marks_got / MAX_PTS  × 100
+//  (marks_got = calcTotalPoints clamped ≥ 0)
+// ════════════════════════════════════════════════════════
 function calcPoints(ans,q){
   if(!ans.done) return PTS_SKIP;
-  if(q.type==='multi'){
-    // no partial credit; +4 only if selection exactly matches correct set
-    return ans.ok ? PTS_CORRECT : 0;
-  } else {
-    if(ans.sel===-1) return PTS_SKIP;
-    return ans.ok ? PTS_CORRECT : PTS_WRONG;
-  }
+  if(q.type==='multi') return ans.ok ? PTS_CORRECT : 0;
+  if(ans.sel===-1) return PTS_SKIP;
+  return ans.ok ? PTS_CORRECT : PTS_WRONG;
 }
 function calcTotalPoints(){
   return answers.reduce((sum,ans,i)=>sum+calcPoints(ans,qs[i]),0);
 }
 
-// ────────────────────────────────────────
-//  ACCURACY  = correct / attempted × 100
-//  "attempted" = questions where the student picked at least one option
-// ────────────────────────────────────────
+// NEW: accuracy = marks obtained / 240 × 100
+// We clamp marks ≥ 0 so negatives don't go below 0%
 function calcAccuracy(){
-  let correct=0,attempted=0;
-  for(let i=0;i<answers.length;i++){
-    const ans=answers[i];const q=qs[i];
-    if(!ans.done) continue;
-    const wasAttempted=q.type==='multi'
-      ?(ans.selArr&&ans.selArr.length>0)
-      :(ans.sel!==-1);
-    if(wasAttempted){
-      attempted++;
-      if(ans.ok) correct++;
-    }
-  }
-  if(attempted===0) return null; // no attempts yet
-  return Math.round(correct/attempted*100);
+  const attempted=answers.some((ans,i)=>{
+    if(!ans.done) return false;
+    const q=qs[i];
+    return q.type==='multi'?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+  });
+  if(!attempted) return null; // nothing answered yet
+  const marksGot=Math.max(calcTotalPoints(),0);
+  return Math.round((marksGot/MAX_PTS)*100);
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  TICKER
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function updateTicker(){
   let sc=0,wr=0,sk=0;
   for(let i=0;i<answers.length;i++){
@@ -721,6 +758,7 @@ function updateTicker(){
   const acc=calcAccuracy();
   $('t-sc').textContent=sc;
   $('t-wr').textContent=wr;
+  // Show accuracy as "marks/240" style in ticker placeholder context
   $('t-acc').textContent=acc!==null?acc+'%':'—';
   $('ts-live').textContent=totalPts;
   const doneCount=answers.filter(a=>a.done).length;
@@ -731,9 +769,9 @@ function updateTicker(){
   $('jump-un-btn').disabled=(unDoneCount===0);
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  START
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function startQuiz(){
   const inputEl=$('username');
   const typedName=inputEl?inputEl.value.trim():'';
@@ -748,9 +786,9 @@ function startQuiz(){
   updateTicker();buildSegs();showScreen('quiz-screen');loadQ();
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  SEGMENTS
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function buildSegs(){
   $('seg-track').innerHTML=qs.map((_,i)=>`<div class="seg" id="seg-${i}"></div>`).join('');
 }
@@ -768,9 +806,9 @@ function refreshSegs(){
   }
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  LOAD QUESTION
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function loadQ(){
   if(cur>=qs.length){showScore();return;}
   clearInterval(timerIv);
@@ -802,13 +840,12 @@ function loadQ(){
   if(isMulti){$('ms-submit-btn').disabled=true;}
 
   if(ans.done){
-    // Re-apply previous selection visual for multi
-    if(isMulti && ans.selArr && ans.selArr.length>0){
+    if(isMulti&&ans.selArr&&ans.selArr.length>0){
       ans.selArr.forEach(i=>{const el=$('opt-'+i);if(el)el.classList.add('ms-selected');});
     }
     locked=true;lockOptions();
     revealOptions(q,ans);
-    showFeedback(ans.ok,q,!( isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1) ));
+    showFeedback(ans.ok,q,!(isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1)));
     setTimerDisplay(0);
   } else {
     locked=false;
@@ -820,9 +857,9 @@ function loadQ(){
   refreshSegs();
 }
 
-// ────────────────────────────────────────
-//  MULTI-SELECT TOGGLE & SUBMIT
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  MULTI-SELECT
+// ════════════════════════════════════════════════════════
 function toggleMulti(i){
   if(locked)return;
   const idx=msSelected.indexOf(i);
@@ -847,9 +884,9 @@ function submitMultiSelect(){
   if(ok){pulseEl('t-sc');pulseEl('ts-live');}else{pulseEl('t-wr');}
 }
 
-// ────────────────────────────────────────
-//  REVEAL CORRECT / WRONG OPTIONS
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  REVEAL OPTIONS
+// ════════════════════════════════════════════════════════
 function revealOptions(q,ans){
   const correctIdxs=Array.isArray(q.a)?q.a:[q.a];
   correctIdxs.forEach(ci=>{const el=$('opt-'+ci);if(el)el.classList.add('correct');});
@@ -862,9 +899,9 @@ function revealOptions(q,ans){
   }
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  TIMER
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function startTimer(){
   tl=TT;setTimerDisplay(tl);
   timerIv=setInterval(()=>{tl--;setTimerDisplay(tl);if(tl<=0){clearInterval(timerIv);autoSkip();}},1000);
@@ -892,9 +929,9 @@ function autoSkip(){
   refreshSegs();updateTicker();
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  SINGLE-SELECT PICK
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function pick(i){
   if(locked)return;locked=true;clearInterval(timerIv);
   const q=qs[cur];const ok=(i===q.a);
@@ -908,9 +945,9 @@ function lockOptions(){
   document.querySelectorAll('.opt').forEach(o=>{o.setAttribute('disabled','');o.classList.add('locked-opt');});
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  FEEDBACK
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function showFeedback(ok,q,skip){
   const fb=$('feedback');
   let cls,lbl;
@@ -925,9 +962,9 @@ function showFeedback(ok,q,skip){
   $('fb-txt').textContent=q.e;
 }
 
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 //  NAVIGATION
-// ────────────────────────────────────────
+// ════════════════════════════════════════════════════════
 function nextQ(){
   clearInterval(timerIv);
   if(!locked){locked=true;answers[cur]={sel:-1,selArr:[],ok:false,done:true};refreshSegs();updateTicker();}
@@ -958,7 +995,6 @@ function showScore(){
   $('total-score-btn').style.display='none';
   document.getElementById('score-overlay').classList.remove('show');
 
-  // Count correct / wrong / skipped
   let sc=0,wr=0,sk=0;
   for(let i=0;i<answers.length;i++){
     const ans=answers[i];const q=qs[i];
@@ -971,21 +1007,21 @@ function showScore(){
   }
 
   const totalPts=calcTotalPoints();
-  const maxPts=qs.length*PTS_CORRECT;
-
-  // Accuracy = correct / attempted (not /total)
-  const acc=calcAccuracy(); // null if no attempts
-  const accStr=acc!==null?acc+'%':'—';
-
-  // Ring shows accuracy percentage (or 0 if none)
+  const marksGot=Math.max(totalPts,0);
+  // Accuracy = marks got / 240 × 100
+  const acc=calcAccuracy(); // now marks-based
+  // Display format: "X% (marksGot/240)"
+  const accStr=acc!==null?`${acc}% (${marksGot}/${MAX_PTS})`:'—';
   const ringPct=acc!==null?acc:0;
 
   const rank=acc===null?'—':acc>=90?'🏆 S+':acc>=80?'⭐ A':acc>=70?'🔵 B':acc>=60?'🟡 C':acc>=50?'🟠 D':'🔴 F';
 
   $('final-pts').textContent=totalPts;
-  $('final-acc').textContent=accStr;
+  // Show accuracy with marks format in the ring sub-text
+  $('final-acc').textContent=acc!==null?acc+'%':'—';
   $('s-cor').textContent=sc;$('s-wr').textContent=wr;$('s-sk').textContent=sk;
-  $('bk-pts').textContent=totalPts+' / '+maxPts;
+  $('bk-pts').textContent=totalPts+' / '+MAX_PTS;
+  // Breakdown shows full accuracy string
   $('bk-acc').textContent=accStr;
   $('bk-rank').textContent=rank;
 
@@ -1007,6 +1043,7 @@ function showScore(){
 
   $('review-section').style.display='none';
   showScreen('score-screen');
+  // Pass formatted accuracy string to leaderboard
   saveAndFetchLeaderboard(totalPts,accStr);
 }
 
@@ -1045,28 +1082,25 @@ function renderLeaderboard(data,currentScore,currentAcc){
     const name=(row.name||row.Name||'Anonymous').toString().toUpperCase();
     const pts=row.score??row.Points??row.Score??0;
     const accRaw=row.accuracy??row.Accuracy??'—';
-    let acc='—';
-    if(accRaw!=='—'){
-      let num=parseFloat(String(accRaw).replace('%',''));
-      if(!isNaN(num)){
-        if(num>0&&num<=1.0)num*=100;
-        acc=Math.round(num)+'%';
-      }
-    }
     const isMe=name===userName.toUpperCase();
+    // If it's Yash's row, make it clickable/highlighted with bday link
+    const isYash=name.includes('YASH');
+    const nameDisplay=isYash
+      ?`<a href="https://akhisweety01-hub.github.io/BDAY/" target="_blank" rel="noopener" style="color:var(--danger);text-decoration:underline;font-weight:700;text-shadow:0 0 6px rgba(220,38,38,0.5)">${name} 🎂</a>`
+      :name;
     return `<tr style="${isMe?'background:rgba(26,115,232,.06);':''}">
       <td><span class="${bc}">${rank}</span> ${rank<=3?medals[rank-1]:''}</td>
-      <td style="font-weight:700;color:${isMe?'var(--accent)':'var(--text)'};">${name}${isMe?' ◀ YOU':''}</td>
+      <td style="font-weight:700;color:${isMe?'var(--accent)':'var(--text)'};">${nameDisplay}${isMe?' ◀ YOU':''}</td>
       <td style="text-align:right;font-weight:700;color:var(--accent3);font-family:var(--font-mono)">${pts}</td>
-      <td style="text-align:right;color:var(--accent2);font-family:var(--font-mono)">${acc}</td>
+      <td style="text-align:right;color:var(--accent2);font-family:var(--font-mono)">${accRaw}</td>
     </tr>`;
   }).join('');
 }
 function displayFallbackLeaderboard(playerScore,playerAcc){
   const mock=[
     {name:userName||'YOU',score:playerScore,accuracy:playerAcc},
-    {name:'ALPHA_ML',score:220,accuracy:'92%'},{name:'NEURAL_NINJA',score:200,accuracy:'84%'},
-    {name:'DATA_GURU',score:180,accuracy:'75%'},{name:'GRADIENT_DESC',score:152,accuracy:'63%'}
+    {name:'ALPHA_ML',score:220,accuracy:'91% (219/240)'},{name:'NEURAL_NINJA',score:200,accuracy:'83% (200/240)'},
+    {name:'DATA_GURU',score:180,accuracy:'75% (180/240)'},{name:'GRADIENT_DESC',score:152,accuracy:'63% (152/240)'}
   ];
   renderLeaderboard(mock,playerScore,playerAcc);
   const s=$('leaderboard-status');if(s)s.textContent='📡 LOCAL STANDINGS';
@@ -1129,10 +1163,10 @@ function showScoreOverlay(){
   }
   const totalPts=calcTotalPoints();
   const acc=calcAccuracy();
-  const remaining=answers.filter(a=>!a.done).length;
   $('sp-cor').textContent=sc;$('sp-wr').textContent=wr;$('sp-sk').textContent=sk;
   $('sp-pts').textContent=totalPts;
-  $('sp-acc').textContent=acc!==null?acc+'%':'—';
+  const marksGot=Math.max(totalPts,0);
+  $('sp-acc').textContent=acc!==null?`${acc}% (${marksGot}/${MAX_PTS})`:'—';
   document.getElementById('score-overlay').classList.add('show');
 }
 function closeScoreOverlay(e){if(e.target===document.getElementById('score-overlay'))document.getElementById('score-overlay').classList.remove('show');}
@@ -1150,25 +1184,27 @@ function restartQuiz(){
 }
 
 // ════════════════════════════════════════════════════════
-//  RIPPLE WATER EFFECT — name card only
+//  WATER RIPPLE ENGINE (reusable for any canvas element)
 // ════════════════════════════════════════════════════════
-(function initRipple(){
-  const canvas=$('ripple-canvas');if(!canvas)return;
+function initRipple(canvas,container){
+  if(!canvas||!container)return;
   const ctx=canvas.getContext('2d');
-  const card=canvas.parentElement;
-  let W,H,cols,rows,curr,prev,damp=0.97;
+  let W,H,cols,rows,curr,prev;
+  const damp=0.97;
+
   function resize(){
-    W=canvas.width=card.offsetWidth;
-    H=canvas.height=card.offsetHeight;
-    cols=Math.floor(W/4);rows=Math.floor(H/4);
+    W=canvas.width=container.offsetWidth;
+    H=canvas.height=container.offsetHeight;
+    if(W<=0||H<=0)return;
+    cols=Math.max(Math.floor(W/4),1);
+    rows=Math.max(Math.floor(H/4),1);
     curr=new Float32Array(cols*rows);
     prev=new Float32Array(cols*rows);
   }
   resize();
-  new ResizeObserver(resize).observe(card);
+  new ResizeObserver(()=>{resize();}).observe(container);
 
   function idx(x,y){return y*cols+x;}
-
   function drop(x,y,r){
     const cx=Math.floor(x/4),cy=Math.floor(y/4);
     for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
@@ -1179,36 +1215,44 @@ function restartQuiz(){
     }
   }
 
-  card.addEventListener('mousemove',e=>{
-    const rect=card.getBoundingClientRect();
+  // Mouse events
+  container.addEventListener('mousemove',e=>{
+    const rect=container.getBoundingClientRect();
     drop(e.clientX-rect.left,e.clientY-rect.top,3);
   });
-  card.addEventListener('click',e=>{
-    const rect=card.getBoundingClientRect();
+  container.addEventListener('click',e=>{
+    const rect=container.getBoundingClientRect();
     drop(e.clientX-rect.left,e.clientY-rect.top,6);
   });
+  // Touch events
+  container.addEventListener('touchmove',e=>{
+    const rect=container.getBoundingClientRect();
+    for(const t of e.touches){
+      drop(t.clientX-rect.left,t.clientY-rect.top,5);
+    }
+  },{passive:true});
+  container.addEventListener('touchstart',e=>{
+    const rect=container.getBoundingClientRect();
+    for(const t of e.touches){
+      drop(t.clientX-rect.left,t.clientY-rect.top,7);
+    }
+  },{passive:true});
 
-  // Drop random drops periodically for ambient effect
+  // Ambient random drops
   setInterval(()=>{
-    drop(Math.random()*W,Math.random()*H,2);
-  },1200);
+    if(W>0&&H>0) drop(Math.random()*W,Math.random()*H,2);
+  },1400);
 
   function tick(){
-    // Wave propagation
+    if(!curr||!prev||cols<=0||rows<=0){requestAnimationFrame(tick);return;}
     for(let y=1;y<rows-1;y++){
       for(let x=1;x<cols-1;x++){
         const i=idx(x,y);
-        curr[i]=(
-          prev[idx(x-1,y)]+prev[idx(x+1,y)]+
-          prev[idx(x,y-1)]+prev[idx(x,y+1)]
-        )/2-curr[i];
+        curr[i]=(prev[idx(x-1,y)]+prev[idx(x+1,y)]+prev[idx(x,y-1)]+prev[idx(x,y+1)])/2-curr[i];
         curr[i]*=damp;
       }
     }
-    // Swap buffers
     [curr,prev]=[prev,curr];
-
-    // Render as subtle blue ripples on transparent background
     const imgData=ctx.createImageData(W,H);
     const d=imgData.data;
     for(let y=1;y<rows-1;y++){
@@ -1216,17 +1260,15 @@ function restartQuiz(){
         const shade=prev[idx(x,y)];
         const sx=Math.min(Math.max(prev[idx(x+1,y)]-shade,-4),4);
         const sy=Math.min(Math.max(prev[idx(x,y+1)]-shade,-4),4);
-        // Map to pixel block
         for(let by=0;by<4;by++){
           for(let bx=0;bx<4;bx++){
             const px=((y*4+by)*W+(x*4+bx))*4;
             const intensity=Math.abs(shade)*0.8;
             const bright=Math.min(intensity,50);
-            // Subtle blue-purple tint
-            d[px]=Math.round(100+sx*8);     // R
-            d[px+1]=Math.round(120+sy*6);   // G
-            d[px+2]=Math.round(200+bright); // B
-            d[px+3]=Math.round(Math.min(intensity*1.2,55)); // A — keep subtle
+            d[px]=Math.round(100+sx*8);
+            d[px+1]=Math.round(120+sy*6);
+            d[px+2]=Math.round(200+bright);
+            d[px+3]=Math.round(Math.min(intensity*1.2,55));
           }
         }
       }
@@ -1235,6 +1277,87 @@ function restartQuiz(){
     requestAnimationFrame(tick);
   }
   tick();
+}
+
+// Init ripple on name card
+initRipple(document.getElementById('ripple-name'), document.getElementById('name-card'));
+
+// Init ripple on leaderboard hero (after a short delay so it's in DOM)
+function initLbRipple(){
+  const lb=document.getElementById('lb-hero');
+  const cv=document.getElementById('ripple-lb');
+  if(lb&&cv) initRipple(cv,lb);
+}
+// Init immediately (it's always in DOM, just hidden)
+initLbRipple();
+
+// ════════════════════════════════════════════════════════
+//  ANTIGRAVITY CURSOR
+// ════════════════════════════════════════════════════════
+(function(){
+  const dot=document.getElementById('cursor-dot');
+  const ring=document.getElementById('cursor-ring');
+  if(!dot||!ring)return;
+
+  // Detect touch device → hide custom cursor
+  let isTouch=false;
+  window.addEventListener('touchstart',()=>{
+    isTouch=true;
+    document.body.classList.add('touch-device');
+  },{once:true,passive:true});
+
+  let mx=0,my=0,rx=0,ry=0;
+
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    dot.style.left=mx+'px';dot.style.top=my+'px';
+    // Antigravity: ring lazily follows
+  });
+  document.addEventListener('mousedown',()=>ring.classList.add('clicked'));
+  document.addEventListener('mouseup',()=>ring.classList.remove('clicked'));
+
+  // Touch cursor ripple effect on the whole page
+  document.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    // Trigger ripple on whichever canvas is visible
+    const nc=document.getElementById('ripple-name');
+    const lb=document.getElementById('ripple-lb');
+    [nc,lb].forEach(c=>{
+      if(!c)return;
+      const parent=c.parentElement;
+      if(!parent)return;
+      const rect=parent.getBoundingClientRect();
+      const x=t.clientX-rect.left, y=t.clientY-rect.top;
+      if(x>=0&&y>=0&&x<=rect.width&&y<=rect.height){
+        // Already handled by initRipple's touchstart listener
+      }
+    });
+  },{passive:true});
+
+  // Ring follows with lag (antigravity spring)
+  function animRing(){
+    const lag=0.13;
+    rx+=(mx-rx)*lag;
+    ry+=(my-ry)*lag;
+    ring.style.left=rx+'px';
+    ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Magnetic hover on interactive elements
+  const MAG_STRENGTH=18;
+  document.querySelectorAll('button,.opt,.start-btn,.action-btn,.nav-btn,.jump-btn,.mag-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ring.classList.add('clicked');});
+    el.addEventListener('mouseleave',()=>{ring.classList.remove('clicked');el.style.transform='';});
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const cx=r.left+r.width/2,cy=r.top+r.height/2;
+      const dx=(e.clientX-cx)/r.width,dy=(e.clientY-cy)/r.height;
+      el.style.transform=`translate(${dx*MAG_STRENGTH}px,${dy*MAG_STRENGTH*0.6}px)`;
+    });
+    el.addEventListener('mouseleave',()=>{el.style.transform='';});
+  });
 })();
 </script>
 </body>
