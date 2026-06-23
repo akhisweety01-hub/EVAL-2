@@ -1044,7 +1044,15 @@ function renderLeaderboard(data,currentScore,currentAcc){
     const bc=rank===1?'rank-badge rank-1':rank===2?'rank-badge rank-2':rank===3?'rank-badge rank-3':'rank-badge';
     const name=(row.name||row.Name||'Anonymous').toString().toUpperCase();
     const pts=row.score??row.Points??row.Score??0;
-    const acc=row.accuracy??row.Accuracy??'—';
+    const accRaw=row.accuracy??row.Accuracy??'—';
+    let acc='—';
+    if(accRaw!=='—'){
+      let num=parseFloat(String(accRaw).replace('%',''));
+      if(!isNaN(num)){
+        if(num>0&&num<=1.0)num*=100;
+        acc=Math.round(num)+'%';
+      }
+    }
     const isMe=name===userName.toUpperCase();
     return `<tr style="${isMe?'background:rgba(26,115,232,.06);':''}">
       <td><span class="${bc}">${rank}</span> ${rank<=3?medals[rank-1]:''}</td>
