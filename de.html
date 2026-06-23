@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ 2nd Mid Module — Evaluation Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@400;500;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap');
+:root{
+  --font-display:'Orbitron',sans-serif;
+  --font-body:'Exo 2',sans-serif;
+  --font-mono:'Share Tech Mono',monospace;
+  --font-label:'Rajdhani',sans-serif;
+  --bg:#f4f6fb;
+  --bg2:#ffffff;
+  --bg3:#eef1f7;
+  --bg4:#e2e8f0;
+  --accent:#1a73e8;
+  --accent2:#7c3aed;
+  --accent3:#059669;
+  --danger:#dc2626;
+  --warn:#d97706;
+  --text:#1e293b;
+  --text2:#475569;
+  --text3:#94a3b8;
+  --border:#cbd5e1;
+  --border2:#e2e8f0;
+  --shadow:0 2px 12px rgba(30,41,59,0.07);
+  --shadow-md:0 4px 24px rgba(30,41,59,0.11);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+
+/* ── Animations ── */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{transform:scale(0.96);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(0.97) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fadeInItem{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowRed{0%{box-shadow:0 0 0 0 rgba(220,38,38,.22);border-color:var(--danger)}70%{box-shadow:0 0 0 6px rgba(220,38,38,0);border-color:var(--danger)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+@keyframes blink{from{opacity:1}to{opacity:.25}}
+@keyframes nameGlow{0%,100%{box-shadow:0 0 0 3px rgba(124,58,237,0.10),var(--shadow-md)}50%{box-shadow:0 0 0 6px rgba(124,58,237,0.20),var(--shadow-md)}}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+
+.screen{display:none}
+.screen.active{display:block;animation:fadeInUp .38s cubic-bezier(.16,1,.3,1) forwards}
+
+/* ── TOP BAR ── */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem 1.2rem;background:var(--bg2);
+  border-bottom:2px solid var(--border2);
+  position:sticky;top:0;z-index:200;
+  box-shadow:var(--shadow);flex-wrap:wrap;gap:.5rem
+}
+.brand-logo{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  width:34px;height:34px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(26,115,232,0.3)
+}
+.brand-name{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;font-family:var(--font-label)}
+.brand-sub{font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:1px}
+.made-by{font-size:9px;color:var(--text3);letter-spacing:1px;text-align:right;line-height:1.6}
+.made-by span{color:var(--accent2);font-weight:700;font-size:11px}
+
+/* ── TICKER ── */
+.score-ticker{display:flex;gap:5px;align-items:center}
+.ticker-item{
+  display:flex;align-items:center;gap:5px;background:var(--bg3);
+  border:1px solid var(--border2);border-radius:6px;padding:4px 9px;
+  font-size:10px;letter-spacing:1px;font-family:var(--font-label)
+}
+.ticker-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--accent3)}.dot-r{background:var(--danger)}.dot-b{background:var(--accent)}
+.ticker-val{font-weight:700;font-size:13px;min-width:24px;display:inline-block;text-align:center;font-family:var(--font-mono)}
+.ticker-lbl{color:var(--text3);font-size:9px}
+.pop{animation:pop .32s cubic-bezier(.175,.885,.32,1.275)}
+.total-score-btn{
+  display:flex;align-items:center;gap:6px;padding:5px 11px;
+  background:var(--bg3);border:2px solid var(--accent3);color:var(--accent3);
+  font-family:var(--font-label);font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s
+}
+.total-score-btn .ts-val{font-size:13px;font-weight:700;color:var(--accent3);min-width:20px;text-align:center;font-family:var(--font-mono)}
+
+/* ── SCORE OVERLAY ── */
+.score-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:10000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.score-overlay.show{display:flex}
+.score-popup{background:var(--bg2);border:2px solid var(--accent3);border-radius:12px;padding:1.4rem;max-width:330px;width:90%;box-shadow:var(--shadow-md);animation:scaleIn .28s cubic-bezier(.16,1,.3,1)}
+.score-popup-title{font-size:11px;color:var(--accent3);letter-spacing:3px;text-transform:uppercase;margin-bottom:.9rem;text-align:center;font-weight:700;font-family:var(--font-label)}
+.score-popup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:.8rem}
+.sp-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.55rem;text-align:center}
+.sp-val{font-size:22px;font-weight:700;margin-bottom:2px;font-family:var(--font-mono)}
+.sp-lbl{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.sp-row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.8rem}
+.sp-cell2{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.55rem;text-align:center}
+.sp-val2{font-size:18px;font-weight:700;font-family:var(--font-mono)}
+.sp-lbl2{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.score-popup-close{width:100%;padding:8px;background:var(--bg3);border:2px solid var(--border2);color:var(--text2);font-family:var(--font-label);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s}
+.score-popup-close:hover{border-color:var(--accent3);color:var(--accent3)}
+
+/* ══════════════════════════════════════
+   START SCREEN
+══════════════════════════════════════ */
+#app{max-width:780px;margin:0 auto;padding:.8rem 1rem;position:relative;z-index:1}
+#start-screen{padding:1.5rem .5rem 2rem}
+
+/* Hero header */
+.start-hero{text-align:center;margin-bottom:1.8rem}
+.title-l1{font-size:30px;font-weight:700;color:var(--accent);letter-spacing:4px;text-transform:uppercase;font-family:var(--font-display);line-height:1.1}
+.title-l2{font-size:16px;font-weight:700;color:var(--accent2);letter-spacing:6px;text-transform:uppercase;font-family:var(--font-display);margin:.3rem 0 .6rem}
+.divider{width:72px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:.5rem auto}
+.sub-title{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:.4rem}
+
+/* Stats row */
+.start-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1.2rem 0}
+.stat-box{background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.65rem;text-align:center;box-shadow:var(--shadow);transition:border-color .2s}
+.stat-box:hover{border-color:var(--accent)}
+.stat-num{font-size:22px;font-weight:700;color:var(--accent);font-family:var(--font-mono)}
+.stat-lbl{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* Scoring pill */
+.scoring-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem}
+.scoring-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-family:var(--font-label);font-size:11px;font-weight:700;letter-spacing:1px}
+.pill-correct{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.3);color:var(--accent3)}
+.pill-wrong{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);color:var(--danger)}
+.pill-skip{background:rgba(148,163,184,.1);border:1px solid var(--border);color:var(--text3)}
+.pill-msq{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:var(--accent2)}
+
+/* Name card — RIPPLE EFFECT here */
+.name-card{
+  position:relative;overflow:hidden;
+  max-width:460px;margin:0 auto 1.2rem;
+  background:var(--bg2);border:2px solid var(--border2);border-radius:14px;
+  padding:1.4rem 1.6rem 1.2rem;
+  box-shadow:var(--shadow-md);
+  animation:nameGlow 3s ease-in-out infinite
+}
+/* Ripple canvas sits inside name-card */
+#ripple-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:12px}
+.name-card>*:not(#ripple-canvas){position:relative;z-index:1}
+.name-card-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border2)}
+.name-card-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.name-card-title{font-family:var(--font-label);font-size:13px;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase}
+.name-card-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.name-input-lbl{display:block;font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-weight:700;font-family:var(--font-label);margin-bottom:7px}
+.name-input{
+  width:100%;padding:13px 16px;
+  font-family:var(--font-display);font-size:15px;font-weight:700;
+  border:2px solid var(--border2);background:var(--bg3);color:var(--text);
+  border-radius:8px;text-align:center;text-transform:uppercase;outline:none;letter-spacing:3px;
+  transition:border-color .25s,box-shadow .25s
+}
+.name-input::placeholder{color:var(--text3);font-size:11px;letter-spacing:2px;font-family:var(--font-label);font-weight:500}
+.name-input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(124,58,237,0.13)}
+.warn-bar{
+  display:flex;align-items:flex-start;gap:8px;margin-top:.9rem;
+  padding:.65rem .85rem;background:rgba(220,38,38,0.05);
+  border:1px solid rgba(220,38,38,0.18);border-left:3px solid var(--danger);border-radius:6px
+}
+.warn-bar-text{font-size:10.5px;color:#7f1d1d;line-height:1.6}
+.warn-bar-text b{color:var(--danger);font-family:var(--font-label);font-size:11.5px}
+
+/* Topics */
+.topics-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:1.2rem}
+.topic-tag{font-size:9px;padding:4px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);color:var(--accent2);letter-spacing:1px;text-transform:uppercase;font-family:var(--font-label);transition:all .2s}
+.topic-tag:hover{border-color:var(--accent2);background:rgba(124,58,237,.07)}
+
+/* Start button */
+.start-btn{
+  display:inline-flex;align-items:center;gap:10px;padding:14px 44px;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;
+  color:#fff;font-family:var(--font-label);font-size:13px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;border-radius:8px;
+  transition:all .25s;box-shadow:0 4px 16px rgba(26,115,232,.28)
+}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,115,232,.4)}
+.start-btn:active{transform:scale(.97)}
+.start-footer{font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:1rem;text-transform:uppercase}
+
+/* ══════════════════════════════════════
+   QUIZ SCREEN
+══════════════════════════════════════ */
+.progress-section{margin-bottom:.7rem}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.q-label{font-size:10px;color:var(--accent);letter-spacing:2px;font-weight:700;font-family:var(--font-label)}
+.q-topic-badge{font-size:11px;padding:2px 10px;border:1px solid var(--accent2);color:var(--accent2);border-radius:20px;letter-spacing:1px;max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-label)}
+.progress-track{height:7px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:4px}
+.seg-track{display:flex;gap:2px;margin-top:3px}
+.seg{flex:1;height:4px;border-radius:1px;background:var(--bg4);transition:background .3s}
+.seg.sc{background:var(--accent3)}.seg.sw{background:var(--danger)}.seg.ss{background:var(--text3)}.seg.cur{background:var(--warn)}
+
+/* Timer */
+.timer-section{display:flex;align-items:center;gap:12px;margin-bottom:.7rem;background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.6rem .85rem;transition:border-color .3s,box-shadow .3s;box-shadow:var(--shadow)}
+.timer-section.dng-pulse{animation:glowRed 1.5s infinite;border-color:var(--danger)}
+.timer-ring{width:46px;height:46px;position:relative;flex-shrink:0}
+.timer-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--bg3);stroke-width:4}
+.ring-fg{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .95s linear,stroke .3s}
+.timer-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent);font-family:var(--font-mono)}
+.timer-text.dng{color:var(--danger);animation:blink .5s ease-in-out infinite alternate}
+.timer-bars{flex:1;display:flex;flex-direction:column;gap:5px}
+.timer-bar-label{display:flex;justify-content:space-between;align-items:center}
+.tbl-text{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-family:var(--font-label)}
+.tbl-val{font-size:11px;font-weight:700;color:var(--accent);font-family:var(--font-mono)}
+.tbl-val.dng{color:var(--danger)}
+.bar-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-time{background:linear-gradient(90deg,var(--accent3),var(--accent));transition:width .95s linear,background .3s}
+.bar-time.dng{background:linear-gradient(90deg,var(--danger),var(--warn))}
+.bar-prog{background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s}
+
+/* Q type badge */
+.q-type-badge-el{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:.35rem;font-family:var(--font-label)}
+.q-type-single{background:rgba(26,115,232,.1);color:var(--accent);border:1px solid rgba(26,115,232,.22)}
+.q-type-multi{background:rgba(124,58,237,.1);color:var(--accent2);border:1px solid rgba(124,58,237,.22)}
+
+/* Question card */
+.q-card{background:var(--bg2);border:2px solid var(--border2);border-left:4px solid var(--accent);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.7rem;animation:slideIn .38s cubic-bezier(.2,.8,.2,1) both;box-shadow:var(--shadow)}
+.q-card.multi-card{border-left-color:var(--accent2)}
+.q-num{font-size:9px;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:.3rem;font-family:var(--font-label)}
+.q-text{font-size:13px;line-height:1.75;color:var(--text)}
+.q-instruction{font-size:10px;color:var(--accent2);margin-top:.3rem;font-style:italic}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:7px;margin-bottom:.7rem}
+.opt{
+  width:100%;padding:.72rem 1rem;border:2px solid var(--border2);border-radius:8px;
+  cursor:pointer;font-size:12px;line-height:1.55;display:flex;gap:10px;align-items:flex-start;
+  background:var(--bg2);color:var(--text);font-family:var(--font-body);
+  transition:all .18s;text-align:left;animation:popIn .28s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:var(--shadow)
+}
+.opt:hover:not(.locked-opt){border-color:var(--accent);background:rgba(26,115,232,.04);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,115,232,.1)}
+.opt:active:not(.locked-opt){transform:scale(.99)}
+.opt-letter{font-weight:700;min-width:22px;font-size:10px;color:var(--accent2);flex-shrink:0;margin-top:1px;font-family:var(--font-label)}
+.opt:hover:not(.locked-opt) .opt-letter{color:var(--accent)}
+.opt.ms-selected{border-color:var(--accent2)!important;background:rgba(124,58,237,.06)!important}
+.opt.ms-selected .opt-letter{color:var(--accent2)!important}
+.opt.correct{border-color:var(--accent3)!important;background:rgba(5,150,105,.07)!important;color:var(--accent3)!important;box-shadow:0 0 0 3px rgba(5,150,105,.1)!important}
+.opt.correct .opt-letter{color:var(--accent3)!important}
+.opt.wrong{border-color:var(--danger)!important;background:rgba(220,38,38,.06)!important;color:var(--danger)!important;box-shadow:0 0 0 3px rgba(220,38,38,.08)!important}
+.opt.wrong .opt-letter{color:var(--danger)!important}
+.opt.locked-opt{cursor:default;pointer-events:none}
+.opt:nth-child(1){animation-delay:.04s}.opt:nth-child(2){animation-delay:.08s}.opt:nth-child(3){animation-delay:.12s}.opt:nth-child(4){animation-delay:.16s}
+
+/* MSQ submit */
+.ms-submit-row{margin-bottom:.7rem;display:none}
+.ms-submit-btn{
+  padding:10px 24px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;
+  color:#fff;font-family:var(--font-label);font-size:12px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .2s;
+  box-shadow:0 2px 8px rgba(26,115,232,.22)
+}
+.ms-submit-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,115,232,.32)}
+.ms-submit-btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
+
+/* Feedback */
+.feedback{margin-bottom:.7rem;padding:.8rem 1rem;border-radius:8px;font-size:11px;line-height:1.75;display:none;border-left:4px solid}
+.feedback.show{display:block;animation:slideIn .3s cubic-bezier(.16,1,.3,1)}
+.feedback.cfb{background:rgba(5,150,105,.06);border-color:var(--accent3);color:#065f46}
+.feedback.wfb{background:rgba(220,38,38,.05);border-color:var(--danger);color:#7f1d1d}
+.feedback.sfb{background:rgba(217,119,6,.06);border-color:var(--warn);color:#78350f}
+.fb-label{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-label)}
+.cfb .fb-label{color:var(--accent3)}.wfb .fb-label{color:var(--danger)}.sfb .fb-label{color:var(--warn)}
+
+/* Nav */
+.nav-row{display:flex;gap:8px;margin-top:.2rem}
+.nav-btn{flex:1;padding:11px;background:var(--bg2);font-family:var(--font-label);font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .18s;box-shadow:var(--shadow)}
+.nav-btn:active{transform:scale(.97)}
+.btn-prev{border:2px solid var(--border2);color:var(--text2)}
+.btn-prev:hover:not(:disabled){border-color:var(--text);color:var(--text)}
+.btn-prev:disabled{opacity:.32;cursor:not-allowed}
+.btn-next{border:2px solid var(--accent2);color:var(--accent2)}
+.btn-next:hover{background:rgba(124,58,237,.05);border-color:var(--accent);color:var(--accent)}
+.jump-row{display:flex;gap:6px;margin-top:6px}
+.jump-btn{flex:1;padding:9px 6px;background:var(--bg2);font-family:var(--font-label);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:all .18s;box-shadow:var(--shadow)}
+.jump-btn:active{transform:scale(.97)}
+.jump-btn:disabled{opacity:.32;cursor:not-allowed}
+.jump-answered{border:2px solid var(--accent3);color:var(--accent3)}
+.jump-answered:hover:not(:disabled){background:rgba(5,150,105,.05)}
+.jump-unanswered{border:2px solid var(--warn);color:var(--warn)}
+.jump-unanswered:hover:not(:disabled){background:rgba(217,119,6,.05)}
+.jump-badge{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font-size:8px;font-weight:700;margin-left:4px;vertical-align:middle}
+.jb-ans{background:var(--accent3);color:#fff}.jb-un{background:var(--warn);color:#fff}
+
+/* ══════════════════════════════════════
+   SCORE SCREEN
+══════════════════════════════════════ */
+#score-screen{padding:.4rem 0}
+.score-hero{text-align:center;padding:1.4rem 1rem;background:var(--bg2);border:2px solid var(--border2);border-radius:12px;margin-bottom:.7rem;animation:scaleIn .42s cubic-bezier(.16,1,.3,1) both;box-shadow:var(--shadow-md)}
+.score-ring{width:130px;height:130px;position:relative;margin:0 auto .85rem}
+.score-ring svg{transform:rotate(-90deg)}
+.sc-bg{fill:none;stroke:var(--bg3);stroke-width:9}
+.sc-fg{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1),stroke .5s}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.score-center-pts{font-size:26px;font-weight:700;font-family:var(--font-mono);transition:color .5s}
+.score-center-acc{font-size:13px;font-weight:700;font-family:var(--font-mono);color:var(--text2)}
+.score-center-lbl{font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+.result-title{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:.3rem;font-family:var(--font-label)}
+.result-msg{font-size:10px;color:var(--text2)}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:.7rem 0}
+.s-card{background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.7rem;text-align:center;position:relative;overflow:hidden;animation:popIn .4s cubic-bezier(.16,1,.3,1) both;box-shadow:var(--shadow)}
+.s-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 8px 8px}
+.s-card.sg::after{background:var(--accent3)}.s-card.sr::after{background:var(--danger)}.s-card.sb::after{background:var(--text3)}
+.s-val{font-size:28px;font-weight:700;margin-bottom:3px;font-family:var(--font-mono)}
+.s-card.sg .s-val{color:var(--accent3)}.s-card.sr .s-val{color:var(--danger)}.s-card.sb .s-val{color:var(--text2)}
+.s-lbl{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.s-card:nth-child(1){animation-delay:.05s}.s-card:nth-child(2){animation-delay:.1s}.s-card:nth-child(3){animation-delay:.15s}
+.breakdown{background:var(--bg2);border:2px solid var(--border2);border-radius:10px;padding:.8rem;margin-bottom:.7rem;box-shadow:var(--shadow)}
+.bk-title{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:.6rem;font-family:var(--font-label)}
+.bk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.bk-lbl{font-size:10px;color:var(--text2);margin-bottom:3px}
+.bk-val{font-size:17px;font-weight:700;font-family:var(--font-mono)}
+.bk-val.vc{color:var(--accent)}.bk-val.vp{color:var(--accent2)}.bk-val.vr{color:var(--warn)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.7rem}
+.action-btn{flex:1;padding:11px;background:var(--bg2);font-family:var(--font-label);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:8px;transition:all .18s;min-width:90px;box-shadow:var(--shadow)}
+.action-btn:active{transform:scale(.97)}
+.action-btn.ap{border:2px solid var(--accent);color:var(--accent)}
+.action-btn.ap:hover{background:rgba(26,115,232,.05)}
+.action-btn.as{border:2px solid var(--border2);color:var(--text2)}
+.action-btn.as:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* Review */
+#review-section{margin-top:.7rem;display:none}
+.review-header{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border2);font-family:var(--font-label)}
+.review-item{border:2px solid var(--border2);border-radius:8px;padding:.7rem;margin-bottom:.5rem;background:var(--bg2);animation:fadeInItem .28s cubic-bezier(.16,1,.3,1) both;box-shadow:var(--shadow)}
+.review-item.rc{border-left:4px solid var(--accent3)}.review-item.rw{border-left:4px solid var(--danger)}.review-item.rs{border-left:4px solid var(--text3)}
+.review-q{font-size:11px;font-weight:600;margin-bottom:.35rem;line-height:1.55;color:var(--text)}
+.review-ans{font-size:10px;margin-bottom:2px;letter-spacing:.3px}
+.rv-c{color:var(--accent3);font-weight:600}.rv-w{color:var(--danger);font-weight:600}.rv-s{color:var(--text3);font-weight:600}
+.review-exp{font-size:10px;color:var(--text2);line-height:1.65;border-top:1px solid var(--border2);padding-top:.35rem;margin-top:.35rem}
+.review-pts{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:5px;font-family:var(--font-mono)}
+.pts-pos{background:rgba(5,150,105,.1);color:var(--accent3);border:1px solid rgba(5,150,105,.2)}
+.pts-neg{background:rgba(220,38,38,.08);color:var(--danger);border:1px solid rgba(220,38,38,.15)}
+.pts-zero{background:rgba(148,163,184,.1);color:var(--text3);border:1px solid var(--border)}
+
+/* Leaderboard */
+#leaderboard-table{width:100%;border-collapse:collapse;font-size:11px;text-align:left;margin-top:.5rem}
+#leaderboard-table th{font-weight:700;letter-spacing:1px;color:var(--text3);border-bottom:2px solid var(--border2);padding:8px 6px;font-family:var(--font-label);font-size:12px}
+#leaderboard-table td{padding:9px 6px;border-bottom:1px solid var(--border2);vertical-align:middle}
+#leaderboard-table tr:hover{background:rgba(26,115,232,.03)}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;font-weight:700;border-radius:50%;font-size:9px;border:2px solid var(--border2);background:var(--bg3);color:var(--text2)}
+.rank-1{background:rgba(217,119,6,.1);color:var(--warn);border-color:var(--warn)}
+.rank-2{background:rgba(124,58,237,.1);color:var(--accent2);border-color:var(--accent2)}
+.rank-3{background:rgba(26,115,232,.1);color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="brand-logo">
+    <div class="brand-icon">⚡</div>
+    <div>
+      <div class="brand-name">2ND MID MODULE</div>
+      <div class="brand-sub">EVALUATION QUIZ · ML FUNDAMENTALS</div>
+    </div>
+  </div>
+  <div id="live-ticker" class="score-ticker" style="display:none">
+    <div class="ticker-item"><div class="ticker-dot dot-g"></div><span class="ticker-val" id="t-sc">0</span><span class="ticker-lbl">&nbsp;pts</span></div>
+    <div class="ticker-item"><div class="ticker-dot dot-r"></div><span class="ticker-val" id="t-wr">0</span><span class="ticker-lbl">&nbsp;wrong</span></div>
+    <div class="ticker-item"><div class="ticker-dot dot-b"></div><span class="ticker-val" id="t-acc">—</span><span class="ticker-lbl">&nbsp;acc</span></div>
+  </div>
+  <button class="total-score-btn" id="total-score-btn" onclick="showScoreOverlay()" style="display:none">🎯 PTS&nbsp;<span class="ts-val" id="ts-live">0</span></button>
+  <div class="made-by">made by<br><span>YASH</span></div>
+</div>
+
+<!-- SCORE OVERLAY -->
+<div class="score-overlay" id="score-overlay" onclick="closeScoreOverlay(event)">
+  <div class="score-popup">
+    <div class="score-popup-title">⚡ LIVE SCORE BOARD</div>
+    <div class="score-popup-grid">
+      <div class="sp-cell"><div class="sp-val" id="sp-cor" style="color:var(--accent3)">0</div><div class="sp-lbl">✅ correct</div></div>
+      <div class="sp-cell"><div class="sp-val" id="sp-wr" style="color:var(--danger)">0</div><div class="sp-lbl">❌ wrong</div></div>
+      <div class="sp-cell"><div class="sp-val" id="sp-sk" style="color:var(--text3)">0</div><div class="sp-lbl">⏭ skipped</div></div>
+    </div>
+    <div class="sp-row2">
+      <div class="sp-cell2"><div class="sp-val2" id="sp-pts" style="color:var(--accent)">0</div><div class="sp-lbl2">🏆 total pts</div></div>
+      <div class="sp-cell2"><div class="sp-val2" id="sp-acc" style="color:var(--accent2)">—</div><div class="sp-lbl2">🎯 accuracy</div></div>
+    </div>
+    <button class="score-popup-close" onclick="document.getElementById('score-overlay').classList.remove('show')">✕ CLOSE</button>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- ══ START SCREEN ══ -->
+<div id="start-screen" class="screen active">
+  <div class="start-hero">
+    <div class="title-l1">⚡ 2nd Mid Module</div>
+    <div class="title-l2">Evaluation Quiz</div>
+    <div class="divider"></div>
+    <div class="sub-title">🤖 ML Fundamentals · 60 Questions · 45s Each</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="start-stats">
+    <div class="stat-box"><div class="stat-num">60</div><div class="stat-lbl">Questions</div></div>
+    <div class="stat-box"><div class="stat-num">45s</div><div class="stat-lbl">Per Q</div></div>
+    <div class="stat-box"><div class="stat-num">240</div><div class="stat-lbl">Max Pts</div></div>
+    <div class="stat-box"><div class="stat-num">13</div><div class="stat-lbl">Topics</div></div>
+  </div>
+
+  <!-- Scoring pills -->
+  <div class="scoring-row">
+    <span class="scoring-pill pill-correct">✅ +4 Correct</span>
+    <span class="scoring-pill pill-wrong">❌ −1 Wrong</span>
+    <span class="scoring-pill pill-skip">⏭ 0 Skip</span>
+    <span class="scoring-pill pill-msq">☑ MSQ: +4 all-correct · 0 partial</span>
+  </div>
+
+  <!-- Name card with ripple -->
+  <div class="name-card">
+    <canvas id="ripple-canvas"></canvas>
+    <div class="name-card-header">
+      <div class="name-card-icon">👤</div>
+      <div>
+        <div class="name-card-title">Enter Your Name</div>
+        <div class="name-card-sub">Required for leaderboard submission</div>
+      </div>
+    </div>
+    <label class="name-input-lbl" for="username">Full Name</label>
+    <input type="text" id="username" class="name-input" placeholder="YOUR NAME HERE" maxlength="30" oninput="this.style.borderColor='var(--border2)'">
+    <div class="warn-bar">
+      <span>⚠️</span>
+      <div class="warn-bar-text"><b>NO fake names</b> — Real name required for leaderboard ranking. Fake submissions will be disqualified.</div>
+    </div>
+  </div>
+
+  <!-- Topics -->
+  <div class="topics-grid">
+    <span class="topic-tag">🐍 Python Fundamentals</span>
+    <span class="topic-tag">🌿 Git &amp; Version Control</span>
+    <span class="topic-tag">🔁 Reproducibility</span>
+    <span class="topic-tag">⚖️ Imbalanced Data</span>
+    <span class="topic-tag">📊 Classification Metrics</span>
+    <span class="topic-tag">🔧 Feature Engineering</span>
+    <span class="topic-tag">🔗 Sklearn Pipelines</span>
+    <span class="topic-tag">📈 Regression &amp; Diagnostics</span>
+    <span class="topic-tag">🌳 Tree-Based Models</span>
+    <span class="topic-tag">🌲 Ensembles &amp; Boosting</span>
+    <span class="topic-tag">🚀 Advanced Boosting</span>
+    <span class="topic-tag">🎛️ Validation &amp; Tuning</span>
+    <span class="topic-tag">⏱️ Time Series</span>
+  </div>
+
+  <button class="start-btn" onclick="startQuiz()">⚡ BEGIN EVALUATION</button>
+  <div class="start-footer">ML Fundamentals · 2nd Mid Module · +4 / −1 Scoring</div>
+</div>
+
+<!-- ══ QUIZ SCREEN ══ -->
+<div id="quiz-screen" class="screen">
+  <div class="progress-section">
+    <div class="progress-info">
+      <span class="q-label" id="q-counter">Q 01 / 60</span>
+      <span class="q-topic-badge" id="q-topic"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-bar" style="width:0%"></div></div>
+    <div class="seg-track" id="seg-track"></div>
+  </div>
+
+  <div class="timer-section" id="timer-section">
+    <div class="timer-ring">
+      <svg width="46" height="46" viewBox="0 0 46 46">
+        <circle class="ring-bg" cx="23" cy="23" r="18"/>
+        <circle class="ring-fg" id="ring-fg" cx="23" cy="23" r="18" stroke="var(--accent)" stroke-dasharray="113.1" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-text" id="timer-text">0:45</div>
+    </div>
+    <div class="timer-bars">
+      <div class="timer-bar-label"><span class="tbl-text">⏱ TIME REMAINING</span><span class="tbl-val" id="tbl-val">45s</span></div>
+      <div class="bar-track"><div class="bar-fill bar-time" id="time-bar" style="width:100%"></div></div>
+      <div class="timer-bar-label" style="margin-top:2px"><span class="tbl-text">📊 QUIZ PROGRESS</span><span class="tbl-val" id="pbl-val">0%</span></div>
+      <div class="bar-track"><div class="bar-fill bar-prog" id="pct-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div id="q-type-badge-wrap"></div>
+    <div class="q-num" id="q-num">// QUESTION 01</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-instruction" id="q-instruction"></div>
+  </div>
+
+  <div class="options" id="options"></div>
+  <div class="ms-submit-row" id="ms-submit-row">
+    <button class="ms-submit-btn" id="ms-submit-btn" onclick="submitMultiSelect()">✓ SUBMIT ANSWER</button>
+  </div>
+  <div class="feedback" id="feedback"><div class="fb-label" id="fb-lbl"></div><div id="fb-txt"></div></div>
+
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" id="btn-prev" onclick="prevQ()" disabled>‹ PREVIOUS</button>
+    <button class="nav-btn btn-next" id="btn-next" onclick="nextQ()">NEXT ›</button>
+  </div>
+  <div class="jump-row">
+    <button class="jump-btn jump-answered" id="jump-ans-btn" onclick="jumpToAnswered()" disabled>✅ ANSWERED <span class="jump-badge jb-ans" id="jb-ans-count">0</span></button>
+    <button class="jump-btn jump-unanswered" id="jump-un-btn" onclick="jumpToUnanswered()" disabled>⭕ UNANSWERED <span class="jump-badge jb-un" id="jb-un-count">0</span></button>
+  </div>
+</div>
+
+<!-- ══ SCORE SCREEN ══ -->
+<div id="score-screen" class="screen">
+  <div class="score-hero">
+    <div class="score-ring">
+      <svg width="130" height="130" viewBox="0 0 130 130">
+        <circle class="sc-bg" cx="65" cy="65" r="52"/>
+        <circle class="sc-fg" id="sc-fg" cx="65" cy="65" r="52"/>
+      </svg>
+      <div class="score-center">
+        <div class="score-center-pts" id="final-pts">0</div>
+        <div class="score-center-lbl">total pts</div>
+        <div class="score-center-acc" id="final-acc">0%</div>
+        <div class="score-center-lbl">accuracy</div>
+      </div>
+    </div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-msg" id="result-msg"></div>
+  </div>
+  <div class="summary-grid">
+    <div class="s-card sg"><div class="s-val" id="s-cor">0</div><div class="s-lbl">✅ correct</div></div>
+    <div class="s-card sr"><div class="s-val" id="s-wr">0</div><div class="s-lbl">❌ wrong</div></div>
+    <div class="s-card sb"><div class="s-val" id="s-sk">0</div><div class="s-lbl">⏭ skipped</div></div>
+  </div>
+  <div class="breakdown">
+    <div class="bk-title">// 📊 SCORE BREAKDOWN</div>
+    <div class="bk-grid">
+      <div><div class="bk-lbl">🏆 Total Points</div><div class="bk-val vc" id="bk-pts">0</div></div>
+      <div><div class="bk-lbl">🎯 Accuracy</div><div class="bk-val vp" id="bk-acc">—</div></div>
+      <div><div class="bk-lbl">⭐ Rank</div><div class="bk-val vr" id="bk-rank">—</div></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="action-btn ap" onclick="restartQuiz()">↺ RETAKE</button>
+    <button class="action-btn as" onclick="toggleReview()">📋 REVIEW</button>
+    <button class="action-btn ap" onclick="goToLeaderboard()" style="border-color:var(--warn);color:var(--warn)">🏆 LEADERBOARD</button>
+  </div>
+  <div id="review-section">
+    <div class="review-header">// 📝 ANSWER REVIEW</div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<!-- ══ LEADERBOARD SCREEN ══ -->
+<div id="leaderboard-screen" class="screen">
+  <div class="score-hero" style="padding:1.4rem 1rem;margin-bottom:.7rem">
+    <div class="result-title" style="font-size:17px;color:var(--accent2)">🏆 GLOBAL STANDINGS</div>
+    <div class="result-msg" style="margin-top:5px">⚡ Real-time Ranking · All Players · Score + Accuracy</div>
+  </div>
+  <div class="breakdown" style="padding:1rem">
+    <div class="bk-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <span>// 🥇 ALL PLAYERS — RANKED</span>
+      <span id="leaderboard-status" style="font-size:8px;color:var(--warn);text-transform:uppercase">LOADING...</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="leaderboard-table">
+        <thead><tr>
+          <th style="width:60px">Rank</th>
+          <th>👤 Player</th>
+          <th style="text-align:right;width:80px">🏆 Pts</th>
+          <th style="text-align:right;width:90px">🎯 Accuracy</th>
+        </tr></thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="action-btn ap" onclick="restartQuiz()">↺ PLAY AGAIN</button>
+    <button class="action-btn as" onclick="showScreen('score-screen')">‹ VIEW SCORE</button>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ════════════════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════════════════
+const TT=45, CIRC=113.1, SCIRC=326.73;
+const PTS_CORRECT=4, PTS_WRONG=-1, PTS_SKIP=0;
+const GAS_URL='https://script.google.com/macros/s/AKfycbzlt4SbZouvCtZFJsPhHSwaeQDc7j67BvVWyzuyUhTfGSd-4cyrvaf0eNl7EcG1tvQPxw/exec';
+let userName='';
+
+// ════════════════════════════════════════════════════════
+//  QUESTION BANK  (type:'single'|'multi', a:index|[indices])
+// ════════════════════════════════════════════════════════
+const QUESTIONS=[
+  // ── DOC2 §1 — 40 Single-Select ──
+  {q:"On a dataset where the minority class is only 0.17%, a model that reports 99.83% accuracy catches how many criminals?",opts:["0.17% of them","50% of them","Exactly zero","99.83% of them"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"A model hard-coding the majority class 'not-fraud' achieves high accuracy while failing to detect any anomalies whatsoever."},
+  {q:"According to the Saito-Rehmsmeiier Rule, when should you report PR-AUC ONLY?",opts:["When classes are perfectly balanced","When the minority class frequency is < 5%","When ROC-AUC is above 0.90","When using Linear Regression"],a:1,t:"⚖️ Imbalanced Data",type:"single",e:"Severe imbalance causes ROC-AUC to severely inflate, leaving PR-AUC as the only honest metric."},
+  {q:"What is the random-classifier baseline for PR-AUC on a dataset with 1% positive samples?",opts:["0.5","0.01","0.99","0.0"],a:1,t:"⚖️ Imbalanced Data",type:"single",e:"The PR-AUC baseline equals the positive class frequency (π = 0.01), unlike ROC-AUC's fixed 0.5 baseline."},
+  {q:"Which resampling algorithm weights the number of synthetic samples by 'local difficulty' near the decision boundary?",opts:["SMOTE","Random Under-sampling","ADASYN","Polynomial Expansion"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"ADASYN uses boundary gravitation to force synthesis where the decision boundary is most complex."},
+  {q:"If you apply SMOTE to your entire dataset before performing a train-test split, what is the consequence?",opts:["Improved model generalization","Reduced training time","Data leakage resulting in artificial performance","Higher variance in residuals"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"The model essentially 'sees' the test data during training because test points are interpolations of training points."},
+  {q:"In a ColumnTransformer, what happens to columns not explicitly listed if remainder='drop' is set?",opts:["They are carried through unchanged","They are automatically scaled","They are discarded silently","They cause a ValueError"],a:2,t:"🔗 Sklearn Pipelines",type:"single",e:"Setting remainder='drop' enforces strict schema control by silently removing unlisted columns."},
+  {q:"Why is the handle_unknown='ignore' parameter mandatory for OneHotEncoder in production pipelines?",opts:["To speed up categorical encoding","To prevent the inference endpoint from crashing on unseen categories","To ensure the output is a dense NumPy array","To automatically perform target encoding"],a:1,t:"🔗 Sklearn Pipelines",type:"single",e:"It ensures the model yields an all-zero row instead of a fatal exception when encountering a new category."},
+  {q:"Which serialization format is the 'absolute standard' for Scikit-learn pipelines containing massive NumPy arrays?",opts:["pickle","json","joblib","onnx"],a:2,t:"🔗 Sklearn Pipelines",type:"single",e:"Joblib is optimized for massive arrays and includes built-in algorithmic compression."},
+  {q:"In the context of the 'Duration-Leakage Trap,' why is call duration a 'lie' in a bank marketing model?",opts:["It is a continuous feature","It has too many outliers","It is only known after the outcome of the call is decided","It is highly correlated with age"],a:2,t:"🔧 Feature Engineering",type:"single",e:"A feature that doesn't exist before prediction time smuggles the answer into the model, leading to production collapse."},
+  {q:"What Git command is used to see the differences between your current file and the last committed version?",opts:["git status","git log","git diff","git restore"],a:2,t:"🌿 Git & Version Control",type:"single",e:"git diff allows you to check for accidental parameter modifications or deleted lines."},
+  {q:"In a Git merge conflict marker, what does HEAD represent?",opts:["The incoming changes from the experimental branch","Your current branch's version of the code","The version stored on GitHub","A deleted file"],a:1,t:"🌿 Git & Version Control",type:"single",e:"HEAD indicates the code in your current development line before the merge was attempted."},
+  {q:"What is the mathematical 'Sweet Spot' in the Bias-Variance tradeoff?",opts:["High Bias, Low Variance","High Bias, High Variance","Low Bias, Low Variance","Low Bias, High Variance"],a:2,t:"🎛️ Validation & Tuning",type:"single",e:"The sweet spot minimizes total error where the model is complex enough to learn but simple enough to generalize."},
+  {q:"Which regularization technique can perform automatic feature selection by zeroing out coefficients?",opts:["L2 (Ridge)","L1 (Lasso)","ElasticNet","Polynomial Expansion"],a:1,t:"🎛️ Validation & Tuning",type:"single",e:"The sharp corners of the L1 diamond force the optimizer to drop specific coefficients to exactly zero."},
+  {q:"In Python, what is the value of x after x = 24 % 5?",opts:["4.8","4","0","5"],a:1,t:"🐍 Python Fundamentals",type:"single",e:"The modulo operator returns the remainder: 24 ÷ 5 = 4 remainder 4."},
+  {q:"Which diagnostic plot indicates that residuals are 'Normal' if the dots hug a 45-degree diagonal line?",opts:["Residuals vs Fitted","Q-Q Plot","Scale-Location","Histogram"],a:1,t:"📈 Regression & Diagnostics",type:"single",e:"A Q-Q (Quantile-Quantile) plot tests the normality assumption of regression residuals."},
+  {q:"A VIF score of 12 for a feature indicates:",opts:["The feature is highly important","Problematic multicollinearity that compromises coefficient interpretability","The model is underfitting","The residuals follow a skewed distribution"],a:1,t:"📈 Regression & Diagnostics",type:"single",e:"VIF > 10 is the threshold where coefficients are considered mathematically compromised by multicollinearity."},
+  {q:"What is 'Heteroscedasticity'?",opts:["When residuals follow a normal distribution","When the error term variance changes across the range of measured values","A method for finding the optimal learning rate","A type of Git branching strategy"],a:1,t:"📈 Regression & Diagnostics",type:"single",e:"Heteroscedasticity appears as a 'fan' shape in residual plots and invalidates prediction intervals."},
+  {q:"Which statistical test is used to check for a 'unit root' to confirm stationarity in time series?",opts:["T-test","Augmented Dickey-Fuller (ADF)","Chi-Square","VIF"],a:1,t:"⏱️ Time Series",type:"single",e:"A p-value < 0.05 in the ADF test rejects the null hypothesis of a unit root, confirming stationarity."},
+  {q:"In an ARIMA(p, d, q) model, what does 'd' represent?",opts:["The number of past values the model looks back at","The number of past forecast errors","The number of times the series was differenced to achieve stationarity","The seasonal period"],a:2,t:"⏱️ Time Series",type:"single",e:"Differencing ('I' for Integrated) removes the trend by subtracting successive observations."},
+  {q:"Which validation strategy is mandatory for time series to avoid 'predicting the past using the future'?",opts:["5-Fold Cross-Validation","Stratified K-Fold","Walk-Forward Validation","Leave-One-Out Validation"],a:2,t:"⏱️ Time Series",type:"single",e:"Standard random K-fold violates the 'arrow of time' by putting future data into training folds."},
+  {q:"What does a Gini Impurity of 0.5 represent in a binary classification node?",opts:["Perfect purity","Maximum disorder (50/50 split)","An error in the data","100% accuracy"],a:1,t:"🌳 Tree-Based Models",type:"single",e:"0.5 is the worst-case impurity for binary classification, meaning both classes are equally probable."},
+  {q:"In the CART algorithm, how are splits selected?",opts:["By randomly picking a feature","By evaluating every feature and threshold to find the lowest weighted Gini","By using gradient descent on weights","By asking the user for a threshold"],a:1,t:"🌳 Tree-Based Models",type:"single",e:"CART uses an exhaustive brute-force search over all features and thresholds at every node."},
+  {q:"Increasing the min_samples_leaf parameter in a Decision Tree will:",opts:["Increase overfitting","Decrease overfitting by making the tree simpler","Increase the tree's maximum depth","Have no effect on the tree"],a:1,t:"🌳 Tree-Based Models",type:"single",e:"Larger leaf requirements prevent the tree from creating tiny, noisy branches, reducing overfitting."},
+  {q:"A Random Forest reduces overall error primarily by lowering:",opts:["Bias","Variance","Training time","The number of features"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"Aggregating many diverse trees causes individual prediction errors to cancel out, reducing variance."},
+  {q:"What percentage of original records are typically left 'out-of-bag' (OOB) in each bootstrap sample?",opts:["10%","50%","Roughly 36.8%","100%"],a:2,t:"🌲 Ensemble Methods",type:"single",e:"~36.8% of records are omitted per bootstrap draw (1/e), providing free built-in validation."},
+  {q:"Which feature importance method is biased toward high-cardinality features?",opts:["Permutation Importance","Mean Decrease in Impurity (MDI)","Drop-Column Importance","Recursive Feature Elimination"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"MDI (Gini importance) inflates scores for high-cardinality features because they offer more split thresholds."},
+  {q:"How does Gradient Boosting build trees?",opts:["In parallel independently","Sequentially, with each tree correcting errors of the previous ones","By randomly shuffling features every epoch","Using bootstrap sampling only"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"Each new tree targets the residual errors (gradients) of the ensemble so far."},
+  {q:"In XGBoost, what does 'Early Stopping' prevent?",opts:["Underfitting","Overfitting by stopping before the model memorizes noise","Parallel processing","Data leakage"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"It monitors a validation metric after each round and stops training when improvement plateaus."},
+  {q:"Which algorithm uses 'Leaf-wise' tree growth rather than 'Level-wise'?",opts:["Random Forest","XGBoost (default)","LightGBM","Decision Tree"],a:2,t:"🚀 Advanced Boosting",type:"single",e:"LightGBM expands the single leaf that produces the greatest loss reduction, ignoring tree depth balance."},
+  {q:"What is CatBoost's primary solution to data leakage in categorical features?",opts:["One-hot encoding","Ordered target encoding","Discarding all categories","Mean imputation"],a:1,t:"🚀 Advanced Boosting",type:"single",e:"Ordered target encoding ensures each record's encoding only uses records that appeared before it in a shuffled order."},
+  {q:"What is the difference between a parameter and a hyperparameter?",opts:["Hyperparameters are learned from data; parameters are set by humans","Parameters are learned from data; hyperparameters are configuration values set before training","They are the same thing","Parameters are only for neural networks"],a:1,t:"🎛️ Validation & Tuning",type:"single",e:"Model weights are parameters (learned); tree depth or learning rate are hyperparameters (configured)."},
+  {q:"One 'Epoch' in model training represents:",opts:["One single update to the weights","One complete pass of the entire training dataset through the model","Ten iterations","The total time spent training in seconds"],a:1,t:"🎛️ Validation & Tuning",type:"single",e:"Running 20 epochs means every training example is seen by the model exactly 20 times."},
+  {q:"In Python, what is the default data type returned by the input() function?",opts:["Integer","Float","String","Boolean"],a:2,t:"🐍 Python Fundamentals",type:"single",e:"input() always returns a string; explicit casting like int() or float() is needed for arithmetic."},
+  {q:"Which Git command allows you to save a snapshot of the project history with a message?",opts:["git init","git add","git commit -m 'message'","git push"],a:2,t:"🌿 Git & Version Control",type:"single",e:"git commit saves staged changes as a permanent snapshot in the local repository."},
+  {q:"Why are Jupyter Notebooks (.ipynb) considered problematic for version control?",opts:["They cannot store Python code","They contain hidden metadata and large output cells that make diffs unreadable","They are too small to track","Git does not support .ipynb files"],a:1,t:"🔁 Reproducibility",type:"single",e:"JSON metadata and embedded outputs make it very hard to see what code actually changed between commits."},
+  {q:"In Python lists, what does the index -1 represent?",opts:["The first element","The second to last element","The last element","An invalid index"],a:2,t:"🐍 Python Fundamentals",type:"single",e:"Negative indexing counts backward from the end: -1 is the last element, -2 the second-to-last, etc."},
+  {q:"Which Python data structure is best for storing data as unique key-value pairs?",opts:["List","Tuple","Dictionary","String"],a:2,t:"🐍 Python Fundamentals",type:"single",e:"Dictionaries map unique keys to values and provide O(1) average-time lookups."},
+  {q:"What is a 'Confounder' in regression?",opts:["A missing value","A feature that influences both the dependent and independent variables","A type of hyperparameter","The intercept of the line"],a:1,t:"📈 Regression & Diagnostics",type:"single",e:"Uncontrolled confounders create spurious correlations that bias coefficient estimates."},
+  {q:"Which component of a time series represents 'regular, repeating patterns'?",opts:["Trend","Seasonality","Residual","Noise"],a:1,t:"⏱️ Time Series",type:"single",e:"Seasonality captures predictable cyclic fluctuations such as weekly or yearly spikes."},
+  {q:"In Random Forests, max_features='sqrt' means:",opts:["The tree depth is limited to the square root of features","Only a random subset (√n) of features is evaluated at each split","The feature weights are squared","Features are scaled using square root normalization"],a:1,t:"🌲 Ensemble Methods",type:"single",e:"Randomly sampling √n features at each node decorrelates individual trees, boosting ensemble diversity."},
+  // ── DOC2 §2 — 10 Multi-Select ──
+  {q:"Which of the following are characteristics of Python Lists?",opts:["Ordered","Immutable","Mutable","Allows Duplicate Values"],a:[0,2,3],t:"🐍 Python Fundamentals",type:"multi",e:"Lists maintain insertion order, allow modification after creation, and accept duplicates. Tuples (not lists) are immutable."},
+  {q:"What should be ignored in a standard ML project's .gitignore file?",opts:["README.md","venv/ (Virtual environments)","Large raw datasets","Trained model files (.pkl, .joblib)"],a:[1,2,3],t:"🌿 Git & Version Control",type:"multi",e:"Git is not designed for large binaries or environment-specific folders. README is essential documentation and must be tracked."},
+  {q:"Which metrics are honest when evaluating a model on 580:1 imbalanced fraud data?",opts:["Accuracy","Precision","Recall","PR-AUC"],a:[1,2,3],t:"⚖️ Imbalanced Data",type:"multi",e:"Accuracy is dominated by True Negatives on extreme imbalance and is therefore meaningless. Precision, Recall, and PR-AUC are appropriate."},
+  {q:"Identify the 'Knobs' in scikit-learn 1.2+ specifically used for production safety:",opts:["handle_unknown='ignore'","set_output(transform='pandas')","sparse_output=False","fit_intercept=True"],a:[0,1,2],t:"🔗 Sklearn Pipelines",type:"multi",e:"These three ensure data integrity, column-name propagation, and predictable dense-array formatting. fit_intercept is a modeling choice, not a safety knob."},
+  {q:"What are the primary sources of error in a machine learning model?",opts:["Bias","Variance","Reproducibility","Irreducible Noise (σ²)"],a:[0,1,3],t:"🎛️ Validation & Tuning",type:"multi",e:"Bias and Variance are controllable; Irreducible Noise is an unavoidable floor. Reproducibility is a process concern, not a model-error source."},
+  {q:"Which techniques can handle 'Missing Values' natively in modern boosting algorithms?",opts:["XGBoost","CatBoost","LightGBM","Simple Linear Regression"],a:[0,1,2],t:"🌲 Ensemble Methods",type:"multi",e:"All three major GBDT implementations route missing values automatically. Standard linear regression requires explicit imputation."},
+  {q:"Components of a professional ML experiment log should include:",opts:["Random seed","Git commit hash","Dataset version","Hyperparameter values"],a:[0,1,2,3],t:"🔁 Reproducibility",type:"multi",e:"All four must be logged to achieve 100% reproducibility: code version (commit), data version, stochastic seed, and configuration."},
+  {q:"Which are valid stopping conditions for the CART algorithm?",opts:["Node becomes pure","max_depth reached","min_samples_split not met","Training accuracy hits 100%"],a:[0,1,2],t:"🌳 Tree-Based Models",type:"multi",e:"CART stops on purity, depth, and sample-count constraints. Accuracy thresholds are not built-in CART stopping conditions."},
+  {q:"Advantages of using a Pipeline object in Scikit-learn include:",opts:["Prevents data leakage during cross-validation","Ensures train-vs-test preprocessing symmetry","Makes the code run 10x faster","Atomizes the 'Production Unit' for serialization"],a:[0,1,3],t:"🔗 Sklearn Pipelines",type:"multi",e:"Pipelines enforce leakage-free preprocessing and clean serialization but do not inherently speed up execution."},
+  {q:"What is true about 'One-Pass' vs 'Two-Pass' algorithms for finding the second largest element?",opts:["Two-pass is more memory efficient","One-pass is faster as it only iterates the data once","Two-pass requires finding the maximum first","One-pass handles duplicates by using num != largest logic"],a:[1,2,3],t:"🐍 Python Fundamentals",type:"multi",e:"One-pass tracks two variables simultaneously for a single O(n) scan. Two-pass requires a full scan for max, then a second scan for second-max."},
+  // ── DOC3 §1 — 5 Single-Select ──
+  {q:"In a time-series tabular transformation, why is it mandatory to apply series.shift(1) before applying .rolling(window).mean()?",opts:["To ensure the rolling window has a constant variance.","To prevent 'catastrophic future leakage' where the model uses today's value to predict today.","To convert the series from multiplicative to additive.","To satisfy the Augmented Dickey-Fuller (ADF) unit root requirement."],a:1,t:"⏱️ Time Series",type:"single",e:"Without shifting, the rolling mean includes the current observation's value, causing the model to 'peek' at the target."},
+  {q:"How does the CatBoost algorithm specifically solve the data leakage problem associated with standard target encoding?",opts:["By using one-hot encoding for all categorical features with cardinality > 10.","By implementing 'Ordered Target Encoding' which uses only records that appeared earlier in a randomly shuffled order.","By ignoring the target variable entirely during the encoding phase.","By calculating the mean target value only on the validation fold."],a:1,t:"🚀 Advanced Boosting",type:"single",e:"Ordered target encoding ensures each record's feature is built from a subset that excludes the record itself, eliminating leakage."},
+  {q:"When comparing the geometry of regularization, why does L1 (Lasso) lead to exact sparsity while L2 (Ridge) does not?",opts:["The L1 constraint is a circle, which allows smooth shrinkage.","The L1 constraint is a diamond with sharp corners on the axes, forcing the optimizer to hit exactly zero.","The L2 constraint has a higher alpha penalty than L1.","L1 is only used for high-dimensional text data."],a:1,t:"🎛️ Validation & Tuning",type:"single",e:"The sharp corners of the L1 diamond mean the loss contours most likely touch the constraint at an axis, where a coefficient is exactly zero."},
+  {q:"According to the Saito-Rehmsmeiier Rule, what is the random-classifier baseline for PR-AUC on a dataset where the minority class frequency is π?",opts:["0.5","1.0","π","1−π"],a:2,t:"⚖️ Imbalanced Data",type:"single",e:"Unlike ROC-AUC's fixed 0.5 baseline, PR-AUC's random baseline equals π (the positive class rate), making it sensitive to class imbalance."},
+  {q:"In the CART algorithm, if you are dealing with a severely imbalanced dataset, which impurity metric is explicitly recommended for better performance?",opts:["Gini Impurity","Entropy","Variance Reduction","Mean Squared Error"],a:1,t:"🌳 Tree-Based Models",type:"single",e:"Entropy's logarithmic scale makes it more sensitive to minority-class splits on severely imbalanced datasets than Gini."},
+  // ── DOC3 §2 — 5 Multi-Select ──
+  {q:"Which of the following are valid stopping conditions for the CART (Classification and Regression Trees) algorithm?",opts:["The node becomes pure (Gini/Entropy = 0).","The user-defined max_depth is reached.","A resulting leaf would have fewer than min_samples_leaf samples.","The training accuracy reaches 99.83%."],a:[0,1,2],t:"🌳 Tree-Based Models",type:"multi",e:"CART uses purity, max_depth, and minimum-sample constraints as stopping rules. Accuracy thresholds are not a native stopping condition."},
+  {q:"Identify the specific 'Diagnostic Plots' required to claim a regression model is structurally valid for deployment:",opts:["Q-Q Plot (to test the Normality of residuals).","Scale-Location Plot (to test for Homoscedasticity).","Residuals vs. Fitted Plot (to test for Linearity).","VIF Plot (to test for target leakage)."],a:[0,1,2],t:"📈 Regression & Diagnostics",type:"multi",e:"The three structural validity plots are Q-Q, Scale-Location, and Residuals vs Fitted. VIF checks multicollinearity, not structural validity."},
+  {q:"In a professional ML experiment log, which components are mandatory for 100% reproducibility?",opts:["The Git commit hash of the code.","The fixed random seed (Python, NumPy, and Torch).","The specific version of the dataset used.","The name of the person who ran the experiment."],a:[0,1,2],t:"🔁 Reproducibility",type:"multi",e:"Reproducibility requires locking code (commit hash), randomness (seed), and data (version). The experimenter's name is administrative, not technical."},
+  {q:"Which technical optimizations allow LightGBM to be significantly faster than XGBoost on massive datasets?",opts:["Level-wise tree growth.","Histogram-based binning of feature values.","Leaf-wise (best-first) tree growth.","Parallel construction of independent trees."],a:[1,2],t:"🚀 Advanced Boosting",type:"multi",e:"LightGBM bins continuous values into ~255 buckets (reducing split candidates) and grows leaf-wise (only the best leaf). These two together drive its speed advantage."},
+  {q:"What are the consequences of applying SMOTE to the entire dataset before performing a train-test split?",opts:["The model 'sees' interpolations of the test data during training.","Cross-validation PR-AUC will hit an artificially high value (e.g., 0.99).","Production performance will likely collapse (e.g., down to 0.40).","The model will become more robust to outliers."],a:[0,1,2],t:"⚖️ Imbalanced Data",type:"multi",e:"This is the 'Resampling Data-Leakage Trap': synthetic points derived from test data contaminate training, inflating CV metrics while destroying real-world performance."}
+];
+
+// ════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════
+let qs=[],cur=0,answers=[],timerIv=null,tl=TT,locked=false,msSelected=[];
+const $=id=>document.getElementById(id);
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=$(id);if(el)el.classList.add('active');}
+function pulseEl(id){const el=$(id);if(!el)return;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
+
+// ────────────────────────────────────────
+//  SCORING
+// ────────────────────────────────────────
+function calcPoints(ans,q){
+  if(!ans.done) return PTS_SKIP;
+  if(q.type==='multi'){
+    // no partial credit; +4 only if selection exactly matches correct set
+    return ans.ok ? PTS_CORRECT : 0;
+  } else {
+    if(ans.sel===-1) return PTS_SKIP;
+    return ans.ok ? PTS_CORRECT : PTS_WRONG;
+  }
+}
+function calcTotalPoints(){
+  return answers.reduce((sum,ans,i)=>sum+calcPoints(ans,qs[i]),0);
+}
+
+// ────────────────────────────────────────
+//  ACCURACY  = correct / attempted × 100
+//  "attempted" = questions where the student picked at least one option
+// ────────────────────────────────────────
+function calcAccuracy(){
+  let correct=0,attempted=0;
+  for(let i=0;i<answers.length;i++){
+    const ans=answers[i];const q=qs[i];
+    if(!ans.done) continue;
+    const wasAttempted=q.type==='multi'
+      ?(ans.selArr&&ans.selArr.length>0)
+      :(ans.sel!==-1);
+    if(wasAttempted){
+      attempted++;
+      if(ans.ok) correct++;
+    }
+  }
+  if(attempted===0) return null; // no attempts yet
+  return Math.round(correct/attempted*100);
+}
+
+// ────────────────────────────────────────
+//  TICKER
+// ────────────────────────────────────────
+function updateTicker(){
+  let sc=0,wr=0,sk=0;
+  for(let i=0;i<answers.length;i++){
+    const ans=answers[i];const q=qs[i];
+    if(!ans.done) continue;
+    const isMulti=q.type==='multi';
+    const attempted=isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+    if(!attempted) sk++;
+    else if(ans.ok) sc++;
+    else wr++;
+  }
+  const totalPts=calcTotalPoints();
+  const acc=calcAccuracy();
+  $('t-sc').textContent=sc;
+  $('t-wr').textContent=wr;
+  $('t-acc').textContent=acc!==null?acc+'%':'—';
+  $('ts-live').textContent=totalPts;
+  const doneCount=answers.filter(a=>a.done).length;
+  const unDoneCount=answers.filter(a=>!a.done).length;
+  $('jb-ans-count').textContent=doneCount;
+  $('jb-un-count').textContent=unDoneCount;
+  $('jump-ans-btn').disabled=(doneCount===0);
+  $('jump-un-btn').disabled=(unDoneCount===0);
+}
+
+// ────────────────────────────────────────
+//  START
+// ────────────────────────────────────────
+function startQuiz(){
+  const inputEl=$('username');
+  const typedName=inputEl?inputEl.value.trim():'';
+  if(!typedName){if(inputEl){inputEl.style.borderColor='var(--danger)';inputEl.focus();}return;}
+  userName=typedName;
+  qs=shuffle(QUESTIONS);
+  cur=0;
+  answers=qs.map(()=>({sel:-1,selArr:[],ok:false,done:false}));
+  locked=false;msSelected=[];
+  $('live-ticker').style.display='flex';
+  $('total-score-btn').style.display='flex';
+  updateTicker();buildSegs();showScreen('quiz-screen');loadQ();
+}
+
+// ────────────────────────────────────────
+//  SEGMENTS
+// ────────────────────────────────────────
+function buildSegs(){
+  $('seg-track').innerHTML=qs.map((_,i)=>`<div class="seg" id="seg-${i}"></div>`).join('');
+}
+function refreshSegs(){
+  for(let i=0;i<qs.length;i++){
+    const el=$('seg-'+i);if(!el)continue;el.className='seg';
+    const ans=answers[i];const q=qs[i];
+    if(ans.done){
+      const isMulti=q.type==='multi';
+      const attempted=isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+      if(!attempted) el.classList.add('ss');
+      else if(ans.ok) el.classList.add('sc');
+      else el.classList.add('sw');
+    } else if(i===cur) el.classList.add('cur');
+  }
+}
+
+// ────────────────────────────────────────
+//  LOAD QUESTION
+// ────────────────────────────────────────
+function loadQ(){
+  if(cur>=qs.length){showScore();return;}
+  clearInterval(timerIv);
+  msSelected=[];
+  const q=qs[cur];const n=cur+1;const L=['A','B','C','D'];const ans=answers[cur];
+  const isMulti=q.type==='multi';
+
+  $('q-counter').textContent=`Q ${String(n).padStart(2,'0')} / ${qs.length}`;
+  $('q-topic').textContent=q.t;
+  $('q-num').textContent=`// QUESTION ${String(n).padStart(2,'0')}`;
+  $('q-text').textContent=q.q;
+  $('q-instruction').textContent=isMulti?'Select ALL that apply:':'';
+  $('q-card').className='q-card'+(isMulti?' multi-card':'');
+  $('q-type-badge-wrap').innerHTML=isMulti
+    ?'<span class="q-type-badge-el q-type-multi">☑ Multiple Select — +4 if ALL correct, 0 otherwise</span>'
+    :'<span class="q-type-badge-el q-type-single">○ Single Select — +4 correct · −1 wrong · 0 skip</span>';
+
+  const pct=cur/qs.length*100;
+  $('progress-bar').style.width=pct+'%';
+  $('pct-bar').style.width=pct+'%';
+  $('pbl-val').textContent=Math.round(pct)+'%';
+
+  $('options').innerHTML=q.opts.map((o,i)=>
+    `<button class="opt" id="opt-${i}" onclick="${isMulti?`toggleMulti(${i})`:`pick(${i})`}">
+      <span class="opt-letter">[${L[i]}]</span><span>${o}</span>
+    </button>`
+  ).join('');
+  $('ms-submit-row').style.display=isMulti?'block':'none';
+  if(isMulti){$('ms-submit-btn').disabled=true;}
+
+  if(ans.done){
+    // Re-apply previous selection visual for multi
+    if(isMulti && ans.selArr && ans.selArr.length>0){
+      ans.selArr.forEach(i=>{const el=$('opt-'+i);if(el)el.classList.add('ms-selected');});
+    }
+    locked=true;lockOptions();
+    revealOptions(q,ans);
+    showFeedback(ans.ok,q,!( isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1) ));
+    setTimerDisplay(0);
+  } else {
+    locked=false;
+    const fb=$('feedback');fb.className='feedback';$('fb-lbl').textContent='';$('fb-txt').textContent='';
+    startTimer();
+  }
+  $('btn-prev').disabled=(cur===0);
+  $('btn-next').textContent=(cur===qs.length-1)?'FINISH ✓':'NEXT ›';
+  refreshSegs();
+}
+
+// ────────────────────────────────────────
+//  MULTI-SELECT TOGGLE & SUBMIT
+// ────────────────────────────────────────
+function toggleMulti(i){
+  if(locked)return;
+  const idx=msSelected.indexOf(i);
+  if(idx>=0) msSelected.splice(idx,1);else msSelected.push(i);
+  for(let j=0;j<qs[cur].opts.length;j++){
+    const btn=$('opt-'+j);if(!btn)continue;
+    msSelected.includes(j)?btn.classList.add('ms-selected'):btn.classList.remove('ms-selected');
+  }
+  $('ms-submit-btn').disabled=(msSelected.length===0);
+}
+function submitMultiSelect(){
+  if(locked)return;
+  locked=true;clearInterval(timerIv);
+  const q=qs[cur];
+  const correctArr=[...q.a].sort((a,b)=>a-b);
+  const selectedArr=[...msSelected].sort((a,b)=>a-b);
+  const ok=JSON.stringify(correctArr)===JSON.stringify(selectedArr);
+  answers[cur]={sel:selectedArr.length>0?selectedArr[0]:-1,selArr:selectedArr,ok,done:true};
+  lockOptions();revealOptions(q,answers[cur]);
+  showFeedback(ok,q,false);
+  refreshSegs();updateTicker();
+  if(ok){pulseEl('t-sc');pulseEl('ts-live');}else{pulseEl('t-wr');}
+}
+
+// ────────────────────────────────────────
+//  REVEAL CORRECT / WRONG OPTIONS
+// ────────────────────────────────────────
+function revealOptions(q,ans){
+  const correctIdxs=Array.isArray(q.a)?q.a:[q.a];
+  correctIdxs.forEach(ci=>{const el=$('opt-'+ci);if(el)el.classList.add('correct');});
+  if(q.type==='multi'){
+    (ans.selArr||[]).forEach(si=>{
+      if(!correctIdxs.includes(si)){const el=$('opt-'+si);if(el)el.classList.add('wrong');}
+    });
+  } else {
+    if(ans.sel>=0&&ans.sel!==q.a){const el=$('opt-'+ans.sel);if(el)el.classList.add('wrong');}
+  }
+}
+
+// ────────────────────────────────────────
+//  TIMER
+// ────────────────────────────────────────
+function startTimer(){
+  tl=TT;setTimerDisplay(tl);
+  timerIv=setInterval(()=>{tl--;setTimerDisplay(tl);if(tl<=0){clearInterval(timerIv);autoSkip();}},1000);
+}
+function setTimerDisplay(t){
+  const pct=Math.max(t,0)/TT;const off=CIRC*(1-pct);const dng=t<=10&&t>0;
+  $('ring-fg').style.strokeDashoffset=off;
+  $('ring-fg').style.stroke=dng?'#dc2626':'var(--accent)';
+  $('timer-text').textContent=`0:${String(Math.max(t,0)).padStart(2,'0')}`;
+  $('timer-text').className='timer-text'+(dng?' dng':'');
+  $('time-bar').style.width=(pct*100)+'%';
+  $('time-bar').className='bar-fill bar-time'+(dng?' dng':'');
+  $('tbl-val').textContent=Math.max(t,0)+'s';
+  $('tbl-val').className='tbl-val'+(dng?' dng':'');
+  const ts=$('timer-section');
+  if(ts){if(dng)ts.classList.add('dng-pulse');else ts.classList.remove('dng-pulse');}
+}
+function autoSkip(){
+  if(locked)return;
+  locked=true;
+  const q=qs[cur];
+  answers[cur]={sel:-1,selArr:[],ok:false,done:true};
+  lockOptions();revealOptions(q,answers[cur]);
+  showFeedback(false,q,true);
+  refreshSegs();updateTicker();
+}
+
+// ────────────────────────────────────────
+//  SINGLE-SELECT PICK
+// ────────────────────────────────────────
+function pick(i){
+  if(locked)return;locked=true;clearInterval(timerIv);
+  const q=qs[cur];const ok=(i===q.a);
+  answers[cur]={sel:i,selArr:[i],ok,done:true};
+  lockOptions();revealOptions(q,answers[cur]);
+  showFeedback(ok,q,false);
+  refreshSegs();updateTicker();
+  if(ok){pulseEl('t-sc');pulseEl('ts-live');}else{pulseEl('t-wr');}
+}
+function lockOptions(){
+  document.querySelectorAll('.opt').forEach(o=>{o.setAttribute('disabled','');o.classList.add('locked-opt');});
+}
+
+// ────────────────────────────────────────
+//  FEEDBACK
+// ────────────────────────────────────────
+function showFeedback(ok,q,skip){
+  const fb=$('feedback');
+  let cls,lbl;
+  if(skip){cls='sfb';lbl='⏱️ TIME EXPIRED — 0 pts';}
+  else if(ok){cls='cfb';lbl=`✅ CORRECT — +${PTS_CORRECT} pts`;}
+  else{
+    if(q.type==='multi'){cls='wfb';lbl='❌ INCORRECT — 0 pts (all-or-nothing for MSQ)';}
+    else{cls='wfb';lbl=`❌ INCORRECT — ${PTS_WRONG} pt`;}
+  }
+  fb.className='feedback show '+cls;
+  $('fb-lbl').textContent=lbl;
+  $('fb-txt').textContent=q.e;
+}
+
+// ────────────────────────────────────────
+//  NAVIGATION
+// ────────────────────────────────────────
+function nextQ(){
+  clearInterval(timerIv);
+  if(!locked){locked=true;answers[cur]={sel:-1,selArr:[],ok:false,done:true};refreshSegs();updateTicker();}
+  cur++;loadQ();
+}
+function prevQ(){
+  if(cur<=0)return;clearInterval(timerIv);
+  if(!locked){locked=true;answers[cur]={sel:-1,selArr:[],ok:false,done:true};}
+  cur--;loadQ();
+}
+function jumpToAnswered(){
+  if(!locked){locked=true;answers[cur]={sel:-1,selArr:[],ok:false,done:true};refreshSegs();updateTicker();}
+  clearInterval(timerIv);
+  for(let offset=1;offset<=qs.length;offset++){const idx=(cur+offset)%qs.length;if(answers[idx].done){cur=idx;loadQ();return;}}
+}
+function jumpToUnanswered(){
+  if(!locked){locked=true;answers[cur]={sel:-1,selArr:[],ok:false,done:true};refreshSegs();updateTicker();}
+  clearInterval(timerIv);
+  for(let offset=1;offset<=qs.length;offset++){const idx=(cur+offset)%qs.length;if(!answers[idx].done){cur=idx;loadQ();return;}}
+}
+
+// ════════════════════════════════════════════════════════
+//  SCORE SCREEN
+// ════════════════════════════════════════════════════════
+function showScore(){
+  clearInterval(timerIv);
+  $('live-ticker').style.display='none';
+  $('total-score-btn').style.display='none';
+  document.getElementById('score-overlay').classList.remove('show');
+
+  // Count correct / wrong / skipped
+  let sc=0,wr=0,sk=0;
+  for(let i=0;i<answers.length;i++){
+    const ans=answers[i];const q=qs[i];
+    if(!ans.done){sk++;continue;}
+    const isMulti=q.type==='multi';
+    const attempted=isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+    if(!attempted) sk++;
+    else if(ans.ok) sc++;
+    else wr++;
+  }
+
+  const totalPts=calcTotalPoints();
+  const maxPts=qs.length*PTS_CORRECT;
+
+  // Accuracy = correct / attempted (not /total)
+  const acc=calcAccuracy(); // null if no attempts
+  const accStr=acc!==null?acc+'%':'—';
+
+  // Ring shows accuracy percentage (or 0 if none)
+  const ringPct=acc!==null?acc:0;
+
+  const rank=acc===null?'—':acc>=90?'🏆 S+':acc>=80?'⭐ A':acc>=70?'🔵 B':acc>=60?'🟡 C':acc>=50?'🟠 D':'🔴 F';
+
+  $('final-pts').textContent=totalPts;
+  $('final-acc').textContent=accStr;
+  $('s-cor').textContent=sc;$('s-wr').textContent=wr;$('s-sk').textContent=sk;
+  $('bk-pts').textContent=totalPts+' / '+maxPts;
+  $('bk-acc').textContent=accStr;
+  $('bk-rank').textContent=rank;
+
+  const grade=acc!==null?acc:0;
+  let title,msg;
+  if(grade>=80){title='⚡ SYSTEM: ELITE';msg='🧠 Neural pathways optimized. ML foundations mastered.';}
+  else if(grade>=60){title='✅ SYSTEM: PASS';msg='💪 Solid foundation. Review flagged topics for mastery.';}
+  else{title='🔄 SYSTEM: RETRY';msg='📚 Recalibrate and reboot. Review the syllabus carefully.';}
+  $('result-title').textContent=title;$('result-msg').textContent=msg;
+
+  const col=grade>=80?'#059669':grade>=60?'#d97706':'#dc2626';
+  setTimeout(()=>{
+    const fg=$('sc-fg');
+    fg.style.strokeDashoffset=SCIRC*(1-ringPct/100);
+    fg.style.stroke=col;
+    $('final-pts').style.color=col;
+    $('final-acc').style.color=col;
+  },200);
+
+  $('review-section').style.display='none';
+  showScreen('score-screen');
+  saveAndFetchLeaderboard(totalPts,accStr);
+}
+
+// ════════════════════════════════════════════════════════
+//  LEADERBOARD
+// ════════════════════════════════════════════════════════
+function saveAndFetchLeaderboard(score,accStr){
+  const statusEl=$('leaderboard-status');
+  if(statusEl)statusEl.textContent='⚡ SAVING...';
+  fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:userName,score,accuracy:accStr})})
+  .then(()=>{if(statusEl)statusEl.textContent='🔄 FETCHING...';return fetch(GAS_URL+'?action=get');})
+  .then(res=>{if(!res.ok)throw new Error('GET '+res.status);return res.json();})
+  .then(data=>renderLeaderboard(data,score,accStr))
+  .catch(err=>{console.error('Leaderboard:',err);if(statusEl)statusEl.textContent='📡 OFFLINE';displayFallbackLeaderboard(score,accStr);});
+}
+function parseAcc(v){if(typeof v==='number')return v;return parseFloat(String(v).replace('%',''))||0;}
+function renderLeaderboard(data,currentScore,currentAcc){
+  const tbody=$('leaderboard-body');const statusEl=$('leaderboard-status');
+  if(statusEl)statusEl.textContent='🟢 LIVE';if(!tbody)return;
+  if(!Array.isArray(data))data=data.data||data.result||[];
+  data.sort((a,b)=>{
+    const sA=Number(a.score??a.Points??a.Score??0);const sB=Number(b.score??b.Points??b.Score??0);
+    if(sB!==sA)return sB-sA;
+    return parseAcc(b.accuracy??b.Accuracy??0)-parseAcc(a.accuracy??a.Accuracy??0);
+  });
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:1rem">🎯 No records yet — you're first!</td></tr>`;return;}
+  const medals=['🥇','🥈','🥉'];
+  tbody.innerHTML=data.map((row,idx)=>{
+    const rank=idx+1;
+    const bc=rank===1?'rank-badge rank-1':rank===2?'rank-badge rank-2':rank===3?'rank-badge rank-3':'rank-badge';
+    const name=(row.name||row.Name||'Anonymous').toString().toUpperCase();
+    const pts=row.score??row.Points??row.Score??0;
+    const acc=row.accuracy??row.Accuracy??'—';
+    const isMe=name===userName.toUpperCase();
+    return `<tr style="${isMe?'background:rgba(26,115,232,.06);':''}">
+      <td><span class="${bc}">${rank}</span> ${rank<=3?medals[rank-1]:''}</td>
+      <td style="font-weight:700;color:${isMe?'var(--accent)':'var(--text)'};">${name}${isMe?' ◀ YOU':''}</td>
+      <td style="text-align:right;font-weight:700;color:var(--accent3);font-family:var(--font-mono)">${pts}</td>
+      <td style="text-align:right;color:var(--accent2);font-family:var(--font-mono)">${acc}</td>
+    </tr>`;
+  }).join('');
+}
+function displayFallbackLeaderboard(playerScore,playerAcc){
+  const mock=[
+    {name:userName||'YOU',score:playerScore,accuracy:playerAcc},
+    {name:'ALPHA_ML',score:220,accuracy:'92%'},{name:'NEURAL_NINJA',score:200,accuracy:'84%'},
+    {name:'DATA_GURU',score:180,accuracy:'75%'},{name:'GRADIENT_DESC',score:152,accuracy:'63%'}
+  ];
+  renderLeaderboard(mock,playerScore,playerAcc);
+  const s=$('leaderboard-status');if(s)s.textContent='📡 LOCAL STANDINGS';
+}
+function goToLeaderboard(){showScreen('leaderboard-screen');}
+
+// ════════════════════════════════════════════════════════
+//  REVIEW
+// ════════════════════════════════════════════════════════
+function toggleReview(){
+  const sec=$('review-section');
+  if(sec.style.display==='block'){sec.style.display='none';return;}
+  sec.style.display='block';
+  const L=['A','B','C','D'];
+  $('review-list').innerHTML=answers.map((ans,i)=>{
+    const q=qs[i];const isMulti=q.type==='multi';
+    const attempted=isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+    const skip=!ans.done||!attempted;
+    const cls=skip?'rs':ans.ok?'rc':'rw';
+    const pts=calcPoints(ans,q);
+    const ptsBadge=skip
+      ?'<span class="review-pts pts-zero">0 pts</span>'
+      :ans.ok
+        ?`<span class="review-pts pts-pos">+${PTS_CORRECT} pts</span>`
+        :isMulti
+          ?'<span class="review-pts pts-zero">0 pts</span>'
+          :`<span class="review-pts pts-neg">${PTS_WRONG} pt</span>`;
+    let selLine='';
+    if(skip){selLine='<span class="rv-s">⏭ Skipped / Time Expired</span>';}
+    else if(isMulti){
+      const labs=(ans.selArr||[]).map(j=>`[${L[j]}] ${q.opts[j]}`).join(', ');
+      selLine=ans.ok?`<span class="rv-c">✅ ${labs}</span>`:`<span class="rv-w">❌ ${labs||'(none)'}</span>`;
+    } else {
+      selLine=ans.ok?`<span class="rv-c">✅ [${L[ans.sel]}] ${q.opts[ans.sel]}</span>`:`<span class="rv-w">❌ [${L[ans.sel]}] ${q.opts[ans.sel]}</span>`;
+    }
+    const correctLine=(!skip&&!ans.ok)
+      ?`<div class="review-ans rv-c">✅ Correct: ${Array.isArray(q.a)?q.a.map(j=>`[${L[j]}] ${q.opts[j]}`).join(', '):`[${L[q.a]}] ${q.opts[q.a]}`}</div>`:'';
+    return `<div class="review-item ${cls}">
+      <div class="review-q">${i+1}. ${q.q} ${ptsBadge}</div>
+      <div class="review-ans">${selLine}</div>
+      ${correctLine}
+      <div class="review-exp">💡 ${q.e}</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════
+//  LIVE SCORE OVERLAY
+// ════════════════════════════════════════════════════════
+function showScoreOverlay(){
+  let sc=0,wr=0,sk=0;
+  for(let i=0;i<answers.length;i++){
+    const ans=answers[i];const q=qs[i];
+    if(!ans.done) continue;
+    const isMulti=q.type==='multi';
+    const attempted=isMulti?(ans.selArr&&ans.selArr.length>0):(ans.sel!==-1);
+    if(!attempted) sk++;
+    else if(ans.ok) sc++;
+    else wr++;
+  }
+  const totalPts=calcTotalPoints();
+  const acc=calcAccuracy();
+  const remaining=answers.filter(a=>!a.done).length;
+  $('sp-cor').textContent=sc;$('sp-wr').textContent=wr;$('sp-sk').textContent=sk;
+  $('sp-pts').textContent=totalPts;
+  $('sp-acc').textContent=acc!==null?acc+'%':'—';
+  document.getElementById('score-overlay').classList.add('show');
+}
+function closeScoreOverlay(e){if(e.target===document.getElementById('score-overlay'))document.getElementById('score-overlay').classList.remove('show');}
+
+// ════════════════════════════════════════════════════════
+//  RESTART
+// ════════════════════════════════════════════════════════
+function restartQuiz(){
+  clearInterval(timerIv);
+  $('live-ticker').style.display='none';$('total-score-btn').style.display='none';
+  document.getElementById('score-overlay').classList.remove('show');
+  $('review-section').style.display='none';
+  const f=$('username');if(f)f.value='';
+  showScreen('start-screen');
+}
+
+// ════════════════════════════════════════════════════════
+//  RIPPLE WATER EFFECT — name card only
+// ════════════════════════════════════════════════════════
+(function initRipple(){
+  const canvas=$('ripple-canvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const card=canvas.parentElement;
+  let W,H,cols,rows,curr,prev,damp=0.97;
+  function resize(){
+    W=canvas.width=card.offsetWidth;
+    H=canvas.height=card.offsetHeight;
+    cols=Math.floor(W/4);rows=Math.floor(H/4);
+    curr=new Float32Array(cols*rows);
+    prev=new Float32Array(cols*rows);
+  }
+  resize();
+  new ResizeObserver(resize).observe(card);
+
+  function idx(x,y){return y*cols+x;}
+
+  function drop(x,y,r){
+    const cx=Math.floor(x/4),cy=Math.floor(y/4);
+    for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+      if(dx*dx+dy*dy<=r*r){
+        const nx=cx+dx,ny=cy+dy;
+        if(nx>=0&&nx<cols&&ny>=0&&ny<rows)curr[idx(nx,ny)]=220;
+      }
+    }
+  }
+
+  card.addEventListener('mousemove',e=>{
+    const rect=card.getBoundingClientRect();
+    drop(e.clientX-rect.left,e.clientY-rect.top,3);
+  });
+  card.addEventListener('click',e=>{
+    const rect=card.getBoundingClientRect();
+    drop(e.clientX-rect.left,e.clientY-rect.top,6);
+  });
+
+  // Drop random drops periodically for ambient effect
+  setInterval(()=>{
+    drop(Math.random()*W,Math.random()*H,2);
+  },1200);
+
+  function tick(){
+    // Wave propagation
+    for(let y=1;y<rows-1;y++){
+      for(let x=1;x<cols-1;x++){
+        const i=idx(x,y);
+        curr[i]=(
+          prev[idx(x-1,y)]+prev[idx(x+1,y)]+
+          prev[idx(x,y-1)]+prev[idx(x,y+1)]
+        )/2-curr[i];
+        curr[i]*=damp;
+      }
+    }
+    // Swap buffers
+    [curr,prev]=[prev,curr];
+
+    // Render as subtle blue ripples on transparent background
+    const imgData=ctx.createImageData(W,H);
+    const d=imgData.data;
+    for(let y=1;y<rows-1;y++){
+      for(let x=1;x<cols-1;x++){
+        const shade=prev[idx(x,y)];
+        const sx=Math.min(Math.max(prev[idx(x+1,y)]-shade,-4),4);
+        const sy=Math.min(Math.max(prev[idx(x,y+1)]-shade,-4),4);
+        // Map to pixel block
+        for(let by=0;by<4;by++){
+          for(let bx=0;bx<4;bx++){
+            const px=((y*4+by)*W+(x*4+bx))*4;
+            const intensity=Math.abs(shade)*0.8;
+            const bright=Math.min(intensity,50);
+            // Subtle blue-purple tint
+            d[px]=Math.round(100+sx*8);     // R
+            d[px+1]=Math.round(120+sy*6);   // G
+            d[px+2]=Math.round(200+bright); // B
+            d[px+3]=Math.round(Math.min(intensity*1.2,55)); // A — keep subtle
+          }
+        }
+      }
+    }
+    ctx.putImageData(imgData,0,0);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
